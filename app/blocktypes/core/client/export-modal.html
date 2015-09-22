@@ -1,0 +1,21 @@
+<!-- set up the modal to start hidden and fade in and out -->
+<div id="export-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exportLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="exportLabel" class="modal-title">{!=$$.REPORTING_LABEL}
+                <? if ($$.SHOW_CSV_EXPORT) { ?>
+                <a href="{!=$$.reportCSVURL}">{!=$$.REPORTING_DOWNLOAD}</a>.
+                <? } ?>
+                </h3>
+            </div>
+            <div class="modal-body">
+                <textarea class="form-control" rows="10">{!=$$.reportText}</textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">{!=$$.REPORTING_CLOSE_BTN}</button>
+            </div>
+        </div>
+    </div>
+</div>
+

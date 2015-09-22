@@ -1,0 +1,78 @@
+<? if (__SCREEN__) { ?>
+
+/*
+.block-__BLOCKTYPE__ {
+  padding: 32px;
+  padding-top:1.5em;
+}
+*/
+.block-__BLOCKTYPE__ h1 {
+  font-size: 2em;
+  font-weight: 300;
+/*  padding-left: 40px;*/
+}
+
+.block-__BLOCKTYPE__ .message {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+.block-__BLOCKTYPE__ .message > span {
+  display: inline-block;
+  clear: none;
+  width: 80%;
+  font-weight: 400;
+  /*color: #555;*/
+}
+
+.block-__BLOCKTYPE__ .message > .time {
+  font-weight: 300;
+  color: #0052a6;
+  display: inline-block;
+  width: 80px;
+  float: left;
+}
+.block-__BLOCKTYPE__ .highlight {
+  font-size: 2em;
+  color: #fff;
+  background-color: #007ac5;
+  padding: 0.5em;
+  margin-bottom: 0.3em;
+  line-height: 1em;
+}
+
+/* moved in from core */
+.block-__BLOCKTYPE__ h1.blockcontainer-mini {
+  margin-top: 25%;
+  font-size: 100%;
+}
+.block-__BLOCKTYPE__ .blockcontainer-mini .message > .time {
+  display:none;
+}
+
+/* endif screen */
+<? } ?>
+
+<? if (__CONTROL__ || __STAGE__) { ?>
+
+.__BLOCKTYPE__-highlight {
+  margin-right: 5px;
+}
+
+.__BLOCKTYPE__-pick {
+  margin-right: 10px;
+}
+
+.__BLOCKTYPE__-msg-control {
+  margin-right: 10px;
+}
+
+.__BLOCKTYPE__-hide, .__BLOCKTYPE__-normalize {
+  margin-left: 10px;
+}
+
+<? } ?>
+
+.__BLOCKTYPE__-message-admin  {
+  background-color: rgba(80, 80, 80, 0.2);
+  font-style: italic;
+}

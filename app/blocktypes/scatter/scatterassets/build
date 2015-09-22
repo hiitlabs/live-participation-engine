@@ -1,0 +1,2 @@
+#echo 'if (!__SCREEN__) {return;} ' > scatterassets.global.min.js
+uglifyjs d3.js nv.d3.js tooltip.js utils.js legend.js axis.js distribution.js scatter.js scatterChart.js -mc >> scatterassets.global.min.js

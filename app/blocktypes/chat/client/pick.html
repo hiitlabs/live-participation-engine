@@ -1,0 +1,41 @@
+<? if (__CONTROL__ || __STAGE__) { ?>
+
+  <div id="pick-{!=$$.id}">
+
+    <? if (__CONTROL__ || __STAGE__) { ?>
+      <!-- TODO tagging -->
+      <span class="__BLOCKTYPE__-controls">
+
+        <? if (__STAGE__) { ?>
+          <a id="pick-{!=$$.id}-highlightBtn" data-id="{!=$$.id}" class="btn btn-lg btn-default __BLOCKTYPE__-highlight text-warning" href="#" title="{!=$$.HIGHLIGHTMSG_HOVER}"><span class="glyphicon glyphicon-star"></span> {!=$$.HIGHLIGHTMSG_BTN}</a>
+        <? } ?>
+        <? if (__CONTROL__) { ?>
+          <a id="pick-{!=$$.id}-highlightBtn" data-id="{!=$$.id}" class="btn btn-xs __BLOCKTYPE__-highlight text-warning" href="#" title="{!=$$.HIGHLIGHTMSG_HOVER}"><span class="glyphicon glyphicon-star"></span> {!=$$.HIGHLIGHTMSG_BTN}</a>
+        <? } ?>
+
+        <? if (__STAGE__) { ?>
+          <a id="pick-{!=$$.id}-pickBtn" data-id="{!=$$.id}" class="btn btn-lg __BLOCKTYPE__-pick text-info" href="#" title="{!=$$.PICKMSG_HOVER}"><span class="glyphicon glyphicon-remove"></span> </a>
+        <? } ?>
+        <? if (__CONTROL__) { ?>
+          <a id="pick-{!=$$.id}-pickBtn" data-id="{!=$$.id}" class="btn btn-xs __BLOCKTYPE__-pick text-info" href="#" title="{!=$$.PICKMSG_HOVER}"><span class="glyphicon glyphicon-remove"></span> {!=$$.PICKMSG_BTN}</a>
+        <? } ?>
+
+      </span>
+    <? } ?>
+
+    <span title="{!=$$.timeTitle}" class="text-muted small">{!=$$.timeStr}</span>
+    <span class="text-muted"> » </span>
+
+    <? if ($$.html) { ?>
+      <span class="__BLOCKTYPE__-msg-text">{!=$$.html}</span>
+    <? } else  { ?>
+      <span class="__BLOCKTYPE__-msg-text">{=$$.text}</span>
+    <? } ?>
+
+    <? if ($$.username) { ?>
+      <span class="text-danger small">&nbsp;&nbsp; &ndash;&nbsp;{=$$.username}</span>
+    <? } ?>
+
+  </div>
+
+<? } ?>

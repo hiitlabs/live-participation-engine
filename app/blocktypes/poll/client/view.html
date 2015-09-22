@@ -1,0 +1,37 @@
+<!-- TODO clean up -->
+<? if (__SCREEN__) { ?>
+<div id="{!=$$.id}" class="blockview block-__BLOCKTYPE__">
+<? } else if (__CONTROL__) { ?>
+<div id="{!=$$.id}" style="border-top:1px dashed #ddd;">
+<? } else { ?>
+<div id="{!=$$.id}" style="border-top:1px dashed #ddd; padding-top:1em; margin-bottom:1em;">
+<? } ?>
+
+  <? if (__CONTROL__) { ?>
+  <div id="{!=$$.id}-toolbar"></div>
+  <? } ?>
+
+  <? if (__SCREEN__) { ?>
+
+  <h1 id="{!=$$.id}-heading"></h1>
+
+  <table id="{!=$$.id}-__BLOCKTYPE__" class="__BLOCKTYPE__"></table>
+
+  <? } else { ?>
+
+  <div id="{!=$$.id}-contents" style="padding-bottom:1em">
+      <!-- collapsible content -->
+      <h4 id="{!=$$.id}-heading"></h4>
+
+      <p id="{!=$$.id}-description"></p>
+
+      <!-- could render the $$.voteOptions already here or in update -->
+      <form id="{!=$$.id}-form">
+      </form>
+      <div id="{!=$$.id}-results">
+      </div>
+  </div>
+
+  <? } ?>
+
+</div>

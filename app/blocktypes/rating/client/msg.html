@@ -1,0 +1,80 @@
+<? if (__SCREEN__) { ?>
+
+  <!-- <li id="{!=$$.blockId}-message-{!=$$.id}" class="message"> -->
+  <? if ($$.admin) { ?>
+  <li id="{!=$$.id}" class="message __BLOCKTYPE__-message-admin">
+  <? } else { ?>
+  <li id="{!=$$.id}" class="message">
+  <? } ?>
+    <span class="time">{!=$$.timeStr}&nbsp;&nbsp;&nbsp;</span>
+    <span>{=$$.text}
+      <? if ($$.username) { ?>
+        <span class="text-muted small">&nbsp;&nbsp; &ndash;&nbsp;{=$$.username}</span>
+      <? } ?>
+    </span>
+    <div style="clear:both;"></div>
+  </li>
+
+<? } else { ?>
+
+  <? if ($$.admin) { ?>
+  <div id="{!=$$.id}" class="__BLOCKTYPE__-message-admin" style="border-bottom:1px solid silver">
+  <? } else { ?>
+  <div id="{!=$$.id}" class="ratingmsg" style="border-bottom:1px solid silver;padding:8px 0;">
+  <? } ?>
+
+    <? if (__CONTROL__ || __STAGE__) { ?>
+      <? if ($$.SHOWRATINGSTATS) { ?>
+        <span id="{!=$$.id}-stats" class="__BLOCKTYPE__-controls">
+        <? if ($$.likertScale) { ?>
+          <!-- assumes msg.points and msg.stddev are proper numbers -->
+          {!=$$.points.toFixed(1)}±{!=$$.stddev.toFixed(1)} (N={!=$$.N})
+        <? } else { ?>
+          ({!=$$.points})
+        <? } ?>
+        </span>
+      <? } ?>
+
+      <!-- TODO tagging -->
+    <? } ?>
+
+    <a id="{!=$$.id}-rateBtn" data-id="{!=$$.id}" class="btn btn-lg __BLOCKTYPE__-rate" href="#" style="margin-right:10px;<? if (!$$.ratingButtons || $$.likertScale) { print('display:none;') } ?>" title="{!=$$.GIVE_VOTE}">{!=$$.GIVE_VOTE}</a>
+
+    <!-- <span title="{!=$$.timeTitle}" class="text-muted small">{!=$$.timeStr}</span>-->
+    <span class="text-muted">&nbsp;</span>
+    <span class="__BLOCKTYPE__-msg-text" style="padding:1em;">{=$$.text}</span>
+
+    <? if ($$.username) { ?>
+      <span class="text-danger small">&nbsp;&nbsp; &ndash;&nbsp;{=$$.username}</span>
+    <? } ?>
+
+    <br class="__BLOCKTYPE__-likert" style="<? if(!$$.ratingButtons || !$$.likertScale) { print('display:none;') } ?>">
+
+    <a id="{!=$$.id}-rateBtn1" data-id="{!=$$.id}" data-points="1" class="btn btn-lg __BLOCKTYPE__-likert" href="#" style="<? if (!$$.ratingButtons || !$$.likertScale) { print('display:none;') } ?>" title="{!=$$.GIVE_VOTE}">1</a>
+
+    <a id="{!=$$.id}-rateBtn2" data-id="{!=$$.id}" data-points="2" class="btn btn-lg __BLOCKTYPE__-likert" href="#" style="<? if (!$$.ratingButtons || !$$.likertScale) { print('display:none;') } ?>" title="{!=$$.GIVE_VOTE}">2</a>
+
+    <a id="{!=$$.id}-rateBtn3" data-id="{!=$$.id}" data-points="3" class="btn btn-lg __BLOCKTYPE__-likert" href="#" style="<? if (!$$.ratingButtons || !$$.likertScale) { print('display:none;') } ?>" title="{!=$$.GIVE_VOTE}">3</a>
+
+    <a id="{!=$$.id}-rateBtn4" data-id="{!=$$.id}" data-points="4" class="btn btn-lg __BLOCKTYPE__-likert" href="#" style="<? if (!$$.ratingButtons || !$$.likertScale) { print('display:none;') } ?>" title="{!=$$.GIVE_VOTE}">4</a>
+
+    <a id="{!=$$.id}-rateBtn5" data-id="{!=$$.id}" data-points="5" class="btn btn-lg __BLOCKTYPE__-likert" href="#" style="margin-right:10px;<? if (!$$.ratingButtons || !$$.likertScale) { print('display:none;') } ?>" title="{!=$$.GIVE_VOTE}">5</a>
+
+    <? if (__CONTROL__) { ?>
+      <? if ($$.q && $$.q === 'x') { ?>
+        <a id="{!=$$.id}-hideBtn" class="__BLOCKTYPE__-normalize btn btn-xs text-muted" data-id="{!=$$.id}" href="#" title="{!=$$.SHOWMSG_HOVER}"><span class="glyphicon glyphicon-plus"></span></a>
+      <? } else { ?>
+        <a id="{!=$$.id}-hideBtn" class="__BLOCKTYPE__-hide btn btn-xs text-muted" data-id="{!=$$.id}" href="#" title="{!=$$.HIDEMSG_HOVER}"><span class="glyphicon glyphicon-remove"></span></a>
+      <? } ?>
+
+      <? if ($$.POINTS) { ?>
+        <a id="{!=$$.id}-bonusBtn" class="__BLOCKTYPE__-bonus btn btn-xs text-muted" data-id="{!=$$.id}" href="#" title="Anna bonuspisteitä"><span class="glyphicon glyphicon-thumbs-up"></span></a>
+      <? } ?>
+
+    <? } ?>
+
+  </div>
+
+<? } ?>
+
+

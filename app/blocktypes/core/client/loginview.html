@@ -1,0 +1,57 @@
+<? if (!$$.loggedIn) { ?>
+  <div class="col-md-1">
+  </div>
+
+  <div class="col-md-10">
+
+    <div class="well text-center">
+      <? if ($$.USERPIN) { ?>
+        <h4>{=$$.NETWORKING_WELCOME}</h4>
+        <p>{=$$.NETWORKING_START1}<br>
+        {=$$.NETWORKING_START2}</p>
+
+        <form class="form-horizontal" role="form" id="userpin-form">
+          <div class="form-group">
+            <div class="col-sm-12">
+               <input type="email" class="form-control text-center" id="userpin-field" placeholder="email@example.com">
+            </div>
+          </div>
+        </form>
+      <? } else { ?>
+
+      <h4 class="" style="color:#000">{=$$.USERNAME_WELCOME}</h4>
+
+      <? } ?>
+
+      <form class="form-horizontal" role="form" id="username-form">
+        <div class="form-group">
+          <div class="col-sm-12">
+             <input type="text" class="form-control text-center" id="username-field" placeholder="{=$$.USERNAME_PLACEHOLDER}">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-12">
+            <button type="submit" class="center-block btn btn-primary" id="username-send">{=$$.USERNAME_BEGIN}</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="col-md-1">
+  </div>
+
+<? } else { ?>
+
+  <div class="col-md-12" style="padding-top:1em;">
+    <div>
+      <strong><span id="username-span"></span></strong>
+      <? if ($$.POINTS) { ?>
+        <span class="text-muted"> – {=$$.ACTIVITY_POINTS}: </span>
+        <strong><span id="points-span" style="font-size:1.5em">0</span></strong> <span id="points-help"></span>
+        <!-- (5. sija) -->
+      <? } ?>
+    </div>
+  </div>
+
+<? } ?>

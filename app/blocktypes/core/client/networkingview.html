@@ -1,0 +1,47 @@
+<? if ($$.loggedIn) { ?>
+
+  <? if ($$.NETWORKING) { ?>
+    <div class="col-md-12">
+
+      <div class="row">
+        <!--<div class="col-md-12" style="color:#ddd;background-color:#000;padding-bottom:1em;">-->
+        <div class="col-md-12" style="padding-bottom:1em;">
+          <div>
+            <span class="text-muted">{=$$.NETWORKING_OWN_CODE}</span>
+            <strong> <span id="networkingCode" class="text-info" style="font-size:1.2em"></span></strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+
+        <div class="col-md-12">
+
+          <div class="well" style="margin-top:1em">
+            <form class="form-inline" id="networking-form" autocomplete="off">
+              <span class="text-muted">{=$$.COLLECT_NETWORKING_CODE}</span>
+              <input type="text" class="form-control" id="networking-field" placeholder="PIN">
+              <button type="submit" class="btn btn-primary" id="networking-send">{=$$.COLLECT_NETWORKING_CODE_BTN}</button>
+            </form>
+          </div>
+          <div>
+            <span class="text-muted"><strong>{=$$.OWN_NETWORK}</strong> </span>
+            <span class="text-muted" id="networking-list"></span>
+          </div>
+          <div>
+            <span class="text-muted"><strong>{=$$.OWN_NETWORK2}</strong> </span>
+            <span class="text-muted" id="networking-list2"></span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  <? } ?>
+
+<? } else  { ?>
+  <!-- workaround for build system: otherwise the template will be empty and not included -->
+  <span><span>
+<? } ?>

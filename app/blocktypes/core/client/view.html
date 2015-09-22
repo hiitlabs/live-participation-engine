@@ -1,0 +1,109 @@
+<? if (__SCREEN__) { ?>
+<div id="core">
+<? } else { ?>
+<div id="core" class="container">
+<? } ?>
+
+<? if (__WEB__ || __STAGE__ || __CONTROL__) { ?>
+
+  <? if ($$.USERNAMES) { ?>
+
+    <div class="row" id="username-row">
+    </div>
+
+    <? if ($$.NETWORKING) { ?>
+      <div class="row" id="networking-row">
+      </div>
+    <? } ?>
+
+  <? } ?>
+
+  <? if ($$.POINTS) { ?>
+    <div class="row" id="scoreboard-row">
+    </div>
+  <? } ?>
+
+  <div class="row core-page-header">
+    <div class="col-md-1">
+    </div>
+    <div class="col-md-10">
+
+      <!-- Top -->
+      <? if (__CONTROL__) { ?>
+        <div class="row core-control-banner well-sm">
+
+          <div class="col-md-6">
+            <form class="form-horizontal core-createform" role="form">
+              <div class="form-group">
+                <label class="control-label text-muted col-md-3" for="core-createSelector">{!=$$.CREATE}</label>
+                <div class="col-md-9">
+                  <select id="core-createSelector" class="form-control"></select>
+                </div>
+              </div>
+              <div id="core-createForm"></div>
+            </form>
+          </div>
+          <div class="col-md-6">
+            <div class="text-muted">
+              <? if ($$.INVERTING) { ?>
+                <button id="core-invertColorsBtn" type="button" class="btn btn-default btn-xs">Invert</button><span> </span>
+              <? } ?>
+
+              <button id="core-exportBtn" type="button" title="{!=$$.EXPORT_HOVER}" class="btn btn-default btn-xs">{!=$$.EXPORT_TITLE}</button><span> </span>
+
+              <? if ($$.USERNAMES) { ?>
+                <button id="core-showUsernameInputBtn" type="button" title="{!=$$.USERNAMES_HOVER}" class="btn btn-default btn-xs">{!=$$.USERNAMES_TITLE}</button><span> </span>
+              <? } ?>
+
+              <button id="core-showSiteUrlBtn" type="button" title="{!=$$.SESSION_URL_HOVER}" class="btn btn-warning btn-xs">{!=$$.SESSION_URL}</button><span> </span>
+              <button id="core-showSocketCountBtn" type="button" title="{!=$$.PARTICIPANT_COUNT_HOVER}" class="btn btn-warning btn-xs">{!=$$.PARTICIPANT_COUNT}</button><span> </span>
+              <span id="socket-count"></span>
+            </div>
+          </div>
+
+        </div>
+      <? } ?>
+
+    </div>
+    <div class="col-md-1">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-1">
+    </div>
+    <div class="col-md-10" id="main-content">
+      <? if ($$.FOOTER_IMAGE) { ?>
+        <img class="{=$$.FOOTER_IMAGE_CLASS}" src="/{=$$.siteRoute}/assets/{=$$.FOOTER_IMAGE}">
+      <? } ?>
+    </div>
+    <div class="col-md-1">
+    </div>
+  </div>
+
+<? } ?>
+
+<? if (__SCREEN__) { ?>
+
+  <div id="header">
+    <? if ($$.SCREEN_IMAGE) { ?>
+      <img src="/{=$$.siteRoute}/assets/{=$$.SCREEN_IMAGE}" style="float:right;margin:5px;background-color:#fff;opacity:1;">
+    <? } ?>
+    <div style="float:right;margin-right:30px;background-color:#fff;opacity:1;">
+      <span id="session-url">{=$$.displayUrl}</span>
+      <span id="socket-count"></span>
+    </div>
+  </div>
+  <div id="blockcontainer-maxi">
+    <!-- large block like poll or chat -->
+  </div>
+  <div id="blockcontainer-mini">
+    <!-- small horizontal block at bottom of screen -->
+  </div>
+  <div id="blockcontainer-sidebar">
+    <!-- small vertical block at right side of screen -->
+  </div>
+
+<? } ?>
+
+</div>

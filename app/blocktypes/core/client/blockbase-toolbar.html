@@ -1,0 +1,41 @@
+<? if (__CONTROL__) { ?>
+
+    <div class="btn-toolbar core-toolbar">
+        <div>
+          <span class="text-muted core-toolbar-blocktype" title="{!=$$.BLOCKTYPE_HOVER}">{!=$$.typeName}</span>
+          <span id="{!=$$.id}-toolbar-heading" class="core-toolbar-heading"></span>
+        </div>
+
+        <a id="{!=$$.id}-show" class="btn" href="#"></a>
+
+        <a id="{!=$$.id}-select" class="btn" href="#"></a>
+
+        <span class="pull-right">
+
+          <span class="text-muted core-toolbar-usercount" title="{!=$$.COUNT_HOVER}"><span class="glyphicon glyphicon-user"></span> <span id="{!=$$.id}-count">0</span></span>
+
+          <span class="text-muted core-toolbar-activitycount" title="{!=$$.ACTIVITY_HOVER}"><span class="glyphicon glyphicon-transfer"></span> <span id="{!=$$.id}-activity"></span></span>
+
+          <span class="btn-group" style="float:none">
+            <a class="btn dropdown-toggle btn-link text-info" data-toggle="dropdown" href="#" title="{!=$$.OPTIONS_HOVER}">
+              <span class="glyphicon glyphicon-cog"></span>
+            </a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+              <li><a id="{!=$$.id}-duplicate" href="#"></a></li>
+              <li class="divider"></li>
+              <li><a id="{!=$$.id}-clear" href="#"></a></li>
+              <li><a id="{!=$$.id}-delete" href="#"></a></li>
+            </ul>
+          </span>
+          <a id="{!=$$.id}-lift" class="btn" href="#"></a>
+          <a id="{!=$$.id}-lower" class="btn" href="#"></a>
+          <a id="{!=$$.id}-collapse" class="btn" href="#"></a>
+        </span>
+
+    </div>
+
+    <!-- TODO move to block -->
+    <div id="{!=$$.id}-minibar" class="btn-toolbar core-minibar">
+    </div>
+
+<? } ?>

@@ -1,0 +1,15 @@
+<? if (__SCREEN__) { ?>
+
+    <li id="{!=$$.blockId}-highlight-{!=$$.id}" class="highlight">
+      <? if ($$.html) { ?>
+        <span>{!=$$.html}</span>
+      <? } else  { ?>
+        <span>{=$$.text}
+          <? if ($$.username) { ?>
+            <span class="text-muted small">&nbsp; &ndash;&nbsp;{=$$.username}</span>
+          <? } ?>
+        </span>
+      <? } ?>
+    </li>
+
+<? } ?>

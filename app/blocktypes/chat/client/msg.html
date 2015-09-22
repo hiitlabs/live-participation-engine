@@ -1,0 +1,93 @@
+<? if (__SCREEN__) { ?>
+
+  <? if ($$.admin) { ?>
+  <li id="{!=$$.id}" class="message __BLOCKTYPE__-message-admin">
+  <? } else { ?>
+  <li id="{!=$$.id}" class="message">
+  <? } ?>
+    <span class="time">{!=$$.timeStr}&nbsp;&nbsp;&nbsp;</span>
+    <? if ($$.html) { ?>
+      <span>{!=$$.html}</span>
+    <? } else  { ?>
+      <span>{=$$.text}
+        <? if ($$.username) { ?>
+          <span class="text-muted small">&nbsp;&nbsp; &ndash;&nbsp;{=$$.username}</span>
+        <? } ?>
+      </span>
+    <? } ?>
+
+    <div style="clear:both;"></div>
+  </li>
+
+<? } else { ?>
+
+  <? if ($$.admin) { ?>
+  <div id="{!=$$.id}" class="__BLOCKTYPE__-message-admin">
+  <? } else { ?>
+  <div id="{!=$$.id}">
+  <? } ?>
+
+    <? if (__CONTROL__ || __STAGE__) { ?>
+      <!-- TODO tagging -->
+      <span class="__BLOCKTYPE__-controls">
+
+        <? if (__STAGE__) { ?>
+          <a id="{!=$$.id}-highlightBtn" data-id="{!=$$.id}" class="btn btn-lg __BLOCKTYPE__-highlight text-warning" href="#" title="{!=$$.HIGHLIGHTMSG_HOVER}"><span class="glyphicon glyphicon-star"></span> {!=$$.HIGHLIGHTMSG_BTN}</a>
+        <? } ?>
+        <? if (__CONTROL__) { ?>
+          <a id="{!=$$.id}-highlightBtn" data-id="{!=$$.id}" class="btn btn-xs __BLOCKTYPE__-highlight text-warning" href="#" title="{!=$$.HIGHLIGHTMSG_HOVER}"><span class="glyphicon glyphicon-star"></span> {!=$$.HIGHLIGHTMSG_BTN}</a>
+        <? } ?>
+
+        <? if ($$.SHOW_PICK_BUTTONS) { ?>
+          <? if (__STAGE__) { ?>
+            <a id="{!=$$.id}-pickBtn" data-id="{!=$$.id}" class="btn btn-lg __BLOCKTYPE__-pick text-info" href="#" title="{!=$$.PICKMSG_HOVER}"><span class="glyphicon glyphicon-arrow-up"></span> </a>
+          <? } ?>
+          <? if (__CONTROL__) { ?>
+            <a id="{!=$$.id}-pickBtn" data-id="{!=$$.id}" class="btn btn-xs __BLOCKTYPE__-pick text-info" href="#" title="{!=$$.PICKMSG_HOVER}"><span class="glyphicon glyphicon-arrow-up"></span> {!=$$.PICKMSG_BTN}</a>
+          <? } ?>
+        <? } ?>
+
+      </span>
+    <? } ?>
+
+    <span title="{!=$$.timeTitle}" class="text-muted small">{!=$$.timeStr}</span>
+    <span class="text-muted"> » </span>
+
+    <? if ($$.html) { ?>
+      <span class="__BLOCKTYPE__-msg-text">{!=$$.html}</span>
+    <? } else  { ?>
+      <span class="__BLOCKTYPE__-msg-text">{=$$.text}</span>
+    <? } ?>
+
+    <? if ($$.username) { ?>
+      <span class="text-danger small">&nbsp;&nbsp; &ndash;&nbsp;{=$$.username}</span>
+    <? } ?>
+
+    <? if (!__SCREEN__) { ?>
+      <? if ($$.own) { ?>
+        <a id="{!=$$.id}-editBtn" class="__BLOCKTYPE__-editing btn btn-xs text-muted" data-id="{!=$$.id}" href="#" title="{!=$$.EDITINGMSG_HOVER}" style="margin-left:10px;<? if (!$$.editingButtons) { print('display:none;') } ?>"><span class="glyphicon glyphicon-edit"></span></a>
+      <? } ?>
+    <? } ?>
+
+      <? if (__CONTROL__) { ?>
+        <? if ($$.q && $$.q === 'x') { ?>
+          <a id="{!=$$.id}-hideBtn" class="__BLOCKTYPE__-normalize btn btn-xs text-muted" data-id="{!=$$.id}" href="#" title="{!=$$.SHOWMSG_HOVER}"><span class="glyphicon glyphicon-plus"></span></a>
+        <? } else { ?>
+          <a id="{!=$$.id}-hideBtn" class="__BLOCKTYPE__-hide btn btn-xs text-muted" data-id="{!=$$.id}" href="#" title="{!=$$.HIDEMSG_HOVER}"><span class="glyphicon glyphicon-remove"></span></a>
+        <? } ?>
+
+        <? if ($$.POINTS) { ?>
+          <a id="{!=$$.id}-bonusBtn" class="__BLOCKTYPE__-bonus btn btn-xs text-muted" data-id="{!=$$.id}" href="#" title="Anna bonuspisteitä"><span class="glyphicon glyphicon-thumbs-up"></span></a>
+        <? } ?>
+
+        <? if ($$.REPLYING && !$$.parent) { ?>
+            <a id="{!=$$.id}-replyBtn" class="__BLOCKTYPE__-reply btn btn-xs text-muted" data-id="{!=$$.id}" href="#" title="{!=$$.REPLYMSG_HOVER}"><span class="glyphicon glyphicon-comment"></span></a>
+
+        <? } ?>
+
+      <? } ?>
+
+
+  </div>
+
+<? } ?>

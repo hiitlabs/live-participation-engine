@@ -1,0 +1,45 @@
+<!-- TODO clean up -->
+<? if (__SCREEN__) { ?>
+<div id="{!=$$.id}" class="blockview block-__BLOCKTYPE__">
+<? } else if (__CONTROL__) { ?>
+<div id="{!=$$.id}" style="border-top:1px dashed #ddd;">
+<? } else { ?>
+<div id="{!=$$.id}" style="border-top:1px dashed #ddd; padding-top:1em; margin-bottom:1em;">
+<? } ?>
+
+  <? if (__CONTROL__) { ?>
+  <div id="{!=$$.id}-toolbar"></div>
+  <? } ?>
+
+  <? if (__SCREEN__) { ?>
+  <h1 id="{!=$$.id}-heading"></h1>
+  <table id="{!=$$.id}-__BLOCKTYPE__" class="__BLOCKTYPE__"></table>
+  <? } else { ?>
+
+  <div id="{!=$$.id}-contents" style="padding-bottom:1em">
+    <!-- collapsible content -->
+    <h4 id="{!=$$.id}-heading"></h4>
+
+    <p id="{!=$$.id}-description"></p>
+
+    <div id="{!=$$.id}-results">
+    </div>
+
+    <form id="{!=$$.id}-form" class="form" style="padding-bottom:1em">
+      <div class="row">
+       <div class="col-lg-6">
+        <input type="text" id="{!=$$.id}-input" autocomplete="off" class="form-control">
+       </div>
+       <div class="col-lg-6">
+        <button id="{!=$$.id}-send" class="btn btn-primary" type="button">{!=$$.SEND_BTN}</button>
+        <!-- <span> </span><button id="{!=$$.id}-sendWithUsername" class="btn btn-danger" type="button">{!=$$.SENDWITHUSERNAME_BTN}</button> -->
+       </div>
+      </div>
+    </form>
+
+    <div id="{!=$$.id}-msgs">
+    </div>
+  </div>
+
+  <? } ?>
+</div>

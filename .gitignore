@@ -1,0 +1,12 @@
+*.sublime*
+.tern-port
+/db/*
+/logs/*
+/build/*
+/config.json
+# Ignore symlink assets
+!/public/assets
+/public/assets/*
+# Include some static assets
+!/public/assets/static
+!/public/assets/scatterFiles

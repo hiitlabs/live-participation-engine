@@ -1,0 +1,23 @@
+<? if (__CONTROL__) { ?>
+
+  <div class="form-group">
+    <label class="col-md-3 control-label text-muted" for="create-heading">{!=$$.CREATE_HEADING}</label>
+    <div class="col-md-9">
+      <!-- <input type="text" id="create-heading" class="form-control" placeholder="{=$$.CREATE_HEADING}">-->
+      <textarea id="create-heading" rows="2" class="form-control" placeholder="{!=$$.CREATE_HEADING_PLACEHOLDER}"></textarea>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-md-3 control-label text-muted" for="create-options">{!=$$.CREATE_OPTIONS}</label>
+    <div class="col-md-9">
+      <textarea id="create-options" rows="5" class="form-control" placeholder="{=$$.CREATE_OPTIONS_FIELD}"></textarea>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-offset-3 col-md-9">
+      <button id="createNewBlock" class="btn btn-default" type="button">{!=$$.CREATE_BTN}</button>
+    </div>
+  </div>
+
+<? } ?>

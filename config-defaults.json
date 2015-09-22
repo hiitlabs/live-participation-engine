@@ -1,0 +1,75 @@
+{
+  "HOSTNAME": "localhost",
+  "TRUST_PROXY": true,
+  "DISPLAY_URL": "localhost/dev",
+  "PORT": "3000",
+  "SITEROUTE": "dev",
+  "COOKIEKEY": "io",
+  "COOKIESECRET": "-----",
+  "SITELANG": "en",
+  "CONTROLPIN": "",
+  "SHOW_CSV_EXPORT": true,
+  "USERPIN": false,
+  "USERNAMES": true,
+  "UNIQUE_USERNAMES": true,
+  "POINTS": false,
+  "USERLIST": false,
+  "NETWORKING": false,
+  "EDITING": false,
+  "REPLYING": false,
+  "ONE_MSG": true,
+  "NOTIFYWRITING": false,
+  "INVERTING": false,
+  "SHOWRATINGSTATS": true,
+  "MEANVAR": false,
+  "SHOW_PICK_BUTTONS": true,
+  "SCREEN_IMAGE": "",
+  "FOOTER_IMAGE": "",
+  "FOOTER_IMAGE_CLASS": "center-block",
+  "CONNECT_TWITTER": false,
+  "BUILT_BLOCKTYPES": [
+    "core", "chat", "poll", "pollplus", "rating", "scatter"
+  ],
+  "BUILT_CHANNELTYPES": [
+    "screen",
+    "control",
+    "stage",
+    "web"
+  ],
+  "MAIN_CHANNEL": "web",
+  "VISIBLE_BLOCKTYPES": [
+    "chat", "poll", "pollplus", "rating", "scatter"
+  ],
+  "DEFAULT_BLOCKINSTANCES": [
+    {
+      "id": "core",
+      "type": "core"
+    }
+  ],
+  "DEFAULT_CHANNELINSTANCES": [
+    {
+      "id": "screen",
+      "type": "screen",
+      "route": "screen",
+      "title": "Presemo Screen"
+    },
+    {
+      "id": "control",
+      "type": "control",
+      "route": "control",
+      "title": "Presemo Control"
+    },
+    {
+      "id": "stage",
+      "type": "stage",
+      "route": "stage",
+      "title": "Presemo Stage"
+    },
+    {
+      "id": "web",
+      "type": "web",
+      "route": "web",
+      "title": "Presemo"
+    }
+  ]
+}
