@@ -3,24 +3,28 @@ Presemo 4 - Live Participation Engine by Screen.io
 ---
 
 Installation:  
-git clone  
+`git clone`  
 (dependencies are checked into this repository, so no npm update needed)  
-npm rebuild (not always necessary)  
+`npm rebuild` (not always necessary)  
 
 Run in development mode:  
-node app/index.js  
+```
+node app/index.js
+```
 or  
-sudo npm install -g nodemon  
-nodemon app/index.js  
+```
+sudo npm install -g nodemon
+nodemon app/index.js
+```
 
 and navigate to  
-http://localhost:3000/dev  
+http://localhost:3000/dev
 http://localhost:3000/dev/control  
 http://localhost:3000/dev/screen  
 http://localhost:3000/dev/stage  
 
 To run more efficiently, use  
-NODE_ENV=production node app/index.js 1>>1.log 2>>2.log  
+`NODE_ENV=production node app/index.js 1>>1.log 2>>2.log`  
  
 Contributing 
 
