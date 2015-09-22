@@ -13,7 +13,7 @@ or
 sudo npm install -g nodemon  
 nodemon app/index.js  
 
-and navigate to 
+and navigate to  
 http://localhost:3000/dev  
 http://localhost:3000/dev/control  
 http://localhost:3000/dev/screen  
@@ -31,6 +31,7 @@ Licenses
 Presemo 4 - Live Participation Engine is licensed under AGPL3. 
 
 There are also external modules checked in to this repository for convenience:  
+```
 presemo-engine-v4/app/node_modules  
 ├── async@0.6.2 (MIT) 
 ├── base64id@0.1.0 (MIT)  
@@ -96,8 +97,10 @@ presemo-engine-v4/app/node_modules
 ├── underscore@1.6.0 (MIT)  
 └─┬ useragent@2.0.8 (MIT)  
   └── lru-cache@2.2.4 (MIT)  
+````
 
 Client libraries used  
+```
 json2@2013-05-26 (Public Domain)  
 component-require@0.2.2 (MIT)  
 underscore@1.5.1 (MIT)  
@@ -114,3 +117,4 @@ respondjs@1.3.0 (MIT)
 noUiSlider@7.0.0 (WTFPL)  
 d3.js@3.4.11 (MIT)  
 nv.d3.js@1.1.15b (MIT)  
+```
