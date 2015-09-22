@@ -1,5 +1,7 @@
 Presemo 4 - Live Participation Engine by Screen.io
 
+![Presemo 4](http://www.screen.io/en/presemo.jpg)
+
 ---
 
 Installation:  
