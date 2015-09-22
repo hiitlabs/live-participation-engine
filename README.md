@@ -18,7 +18,7 @@ nodemon app/index.js
 ```
 
 and navigate to  
-http://localhost:3000/dev
+http://localhost:3000/dev  
 http://localhost:3000/dev/control  
 http://localhost:3000/dev/screen  
 http://localhost:3000/dev/stage  
