@@ -215,9 +215,6 @@ var BlockConstructorMixin = {
     db.set(this.id + 'msgIds', this.msgIds);
     return this;
   },
-  saveMessages: function() { // temporary only
-    this.saveContent();
-  },
 
   // Channels will inject themselves when they are instantiated
   __injectChannel: function(channel) {
@@ -455,7 +452,7 @@ var BlockConstructorMixin = {
     this.msgs[msg.id] = msg;
     this.msgIds.push(msg.id);
     //this.save();
-    this.saveMessages(); // TODO throttled version
+    this.saveContent(); // TODO throttled version
   },
 
   $writing: function(req) {
