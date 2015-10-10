@@ -48,6 +48,8 @@ if (SiteConfig.CONNECT_TWITTER) {
   });
 }
 
+var common = require('../common.js')
+
 // TODO get this from block package.json or somewhere
 var SUPPORTED_CHANNELTYPES = ['web', 'control', 'stage', 'screen'];
 function supports(channeltype) {
@@ -178,12 +180,12 @@ var BlockConstructorStatics = {
     if (typeof dangerousFormObject.heading !== 'string') {
       dangerousFormObject.heading = '';
     }
-    blockConfig.frontends.heading = trimWhitespace(dangerousFormObject.heading).substring(0, 500);
+    blockConfig.frontends.heading = common.functions.trimWhitespace(dangerousFormObject.heading).substring(0, 500);
 
     if (typeof dangerousFormObject.description !== 'string') {
       dangerousFormObject.description = '';
     }
-    blockConfig.frontends.description = trimWhitespace(dangerousFormObject.description).substring(0, 2000);
+    blockConfig.frontends.description = common.functions.trimWhitespace(dangerousFormObject.description).substring(0, 2000);
 
     debug('validated properties: %j', blockConfig);
 
@@ -348,7 +350,7 @@ var BlockConstructorMixin = {
     if (req.channel.type !== 'control') return;
     if (typeof blockGroup !== 'string') return;
     if (this.frontends.blockGroup !== blockGroup) {
-      this.frontends.blockGroup = trimWhitespace(blockGroup).substring(0, 100);
+      this.frontends.blockGroup = common.functions.trimWhitespace(blockGroup).substring(0, 100);
       this.saveFrontends();
       this.rpc('$setConfig', {blockGroup: this.frontends.blockGroup});
       console.info({
@@ -524,7 +526,7 @@ var BlockConstructorMixin = {
     if (req.channel.type !== 'control') return;
     if (typeof heading !== 'string') return;
     if (this.frontends.heading !== heading) {
-      this.frontends.heading = trimWhitespace(heading).substring(0, 500);
+      this.frontends.heading = common.functions.trimWhitespace(heading).substring(0, 500);
       this.saveFrontends();
       this.rpc('$setConfig', {heading: this.frontends.heading});
       console.info({
@@ -539,7 +541,7 @@ var BlockConstructorMixin = {
     if (req.channel.type !== 'control') return;
     if (typeof description !== 'string') return;
     if (this.frontends.description !== description) {
-      this.frontends.description = trimWhitespace(description).substring(0, 2000);
+      this.frontends.description = common.functions.trimWhitespace(description).substring(0, 2000);
       this.saveFrontends();
       this.rpc('$setConfig', {description: this.frontends.description});
       console.info({
@@ -613,7 +615,7 @@ var BlockConstructorMixin = {
       username = '';
     }
 
-    var text = trimWhitespace(msgIn.text).substring(0, 500);
+    var text = common.functions.trimWhitespace(msgIn.text).substring(0, 500);
 
     // var mentions = twitterText.extractMentions(text);
     // if (mentions && mentions.length) {
@@ -726,7 +728,7 @@ var BlockConstructorMixin = {
     // (keep last message for each contributor and compare)
     // perhaps also throttle flooding from same person
 
-    var text = trimWhitespace(msgIn.text).substring(0, 500);
+    var text = common.functions.trimWhitespace(msgIn.text).substring(0, 500);
 
     if (!this.msgs.hasOwnProperty(msgIn.id)) {
       return;
@@ -1529,13 +1531,6 @@ function processTweet(tweet, block) {
   }
 
   // TODO logging
-}
-
-function trimWhitespace(str) {
-  str = str.replace(/\s/g, ' '); // convert all non-printable chars to a space
-  str = str.replace(/^\s+|\s+$/g, ''); // begin end
-  str = str.replace(/\s\s+/g, ' '); // middle
-  return str;
 }
 
 // todo get more messages
