@@ -209,31 +209,13 @@ var BlockConstructorStatics = {
 
 mergeInto(BlockConstructor, BlockConstructorStatics);
 
-
-
 var BlockConstructorMixin = {
 
-  save: function() {
-    db.set(this.id, this.config);
-    db.set(this.id + 'msgIds', this.msgIds);
-    db.set(this.id + 'frontends', this.frontends);
-    db.set(this.id + 'participants', this.participants);
-    db.set(this.id + 'participantCount', this.participantCount);
-    return this;
-  },
-  saveFrontends: function() {
-    db.set(this.id + 'frontends', this.frontends);
-    return this;
-  },
-  saveParticipants: function() {
-    db.set(this.id + 'participants', this.participants);
-    db.set(this.id + 'participantCount', this.participantCount);
-    return this;
-  },
-  saveMessages: function() {
+  saveContent: function() {
     db.set(this.id + 'msgIds', this.msgIds);
     return this;
   },
+  saveMessages: this.saveContent,
 
   // Channels will inject themselves when they are instantiated
   __injectChannel: function(channel) {
@@ -350,22 +332,6 @@ var BlockConstructorMixin = {
         blockId: this.id,
         blockGroup: this.frontends.blockGroup
       }, '$blockGroup');
-    }
-  },
-
-  $active: function(req, active) {
-    if (req.channel.type !== 'control') return;
-    active = !!active;
-    if (this.frontends.active !== active) {
-      this.frontends.active = active;
-      this.saveFrontends();
-      this.rpc('$setConfig', {active: this.frontends.active});
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        active: this.frontends.active
-      }, '$active');
     }
   },
 
@@ -512,38 +478,6 @@ var BlockConstructorMixin = {
       }, '$onlyOneSend');
     }
   },
-
-  $heading: function(req, heading) {
-    if (req.channel.type !== 'control') return;
-    if (typeof heading !== 'string') return;
-    if (this.frontends.heading !== heading) {
-      this.frontends.heading = common.functions.trimWhitespace(heading).substring(0, 500);
-      this.saveFrontends();
-      this.rpc('$setConfig', {heading: this.frontends.heading});
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        heading: this.frontends.heading
-      }, '$heading');
-    }
-  },
-  $description: function(req, description) {
-    if (req.channel.type !== 'control') return;
-    if (typeof description !== 'string') return;
-    if (this.frontends.description !== description) {
-      this.frontends.description = common.functions.trimWhitespace(description).substring(0, 2000);
-      this.saveFrontends();
-      this.rpc('$setConfig', {description: this.frontends.description});
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        description: this.frontends.description
-      }, '$description');
-    }
-  },
-  // TODO Image
 
   addMessage: function(msg) {
     this.msgs[msg.id] = msg;
@@ -1039,31 +973,6 @@ var BlockConstructorMixin = {
       highlights: this.highlights
     }, '$clearTags');
   },
-
-  updateParticipantCount: function(userId) {
-    if (this.participants[userId]) return;
-
-    this.participants[userId] = true; // TODO later more info
-    this.participantCount++;
-
-    console.info({
-      blockId: this.id,
-      participantCount: this.participantCount
-    }, 'chatParticipantCount');
-
-    if (!this.sendParticipantCountThrottled) {
-      this.sendParticipantCountThrottled = throttle(this.sendParticipantCount, 1000);
-    }
-    this.sendParticipantCountThrottled();
-    // TODO throttled save
-    this.saveParticipants();
-  },
-
-  sendParticipantCount: function() {
-    // TODO Will send only to control for now
-    this.rpc('control:$setConfig', {participantCount: this.participantCount});
-  },
-
   // TODO this single getter or multiple, for each feature?
   // Usually better to have consolidated in config and them
   // perhaps separate calls for features.
@@ -1144,6 +1053,13 @@ var BlockConstructorMixin = {
   }
 
 };
+
+BlockConstructor.prototype.db = db;
+
+// import common mixin
+for( var f in common.BlockConstructorMixin ) {
+  BlockConstructorMixin[ f ] = common.BlockConstructorMixin[ f ];
+}
 
 mergeInto(BlockConstructor.prototype, BlockConstructorMixin);
 
