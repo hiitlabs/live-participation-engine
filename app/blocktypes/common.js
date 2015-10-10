@@ -1,4 +1,6 @@
-// commonly used functions
+var throttle = require('../lib/utils/throttle');
+
+// commonly used static functions
 
 var functions = {}
 
@@ -116,6 +118,40 @@ BlockConstructorMixin['$description'] = function(req, description) {
       description: this.frontends.description
     }, '$description');
   }
+};
+
+BlockConstructorMixin.__setVisible = function(visible) {
+  visible = !!visible;
+  if (this.frontends.visible !== visible) {
+    this.frontends.visible = visible;
+    this.saveFrontends();
+    this.rpc('$setConfig', {visible: this.frontends.visible});
+  }
+  return this;
+};
+
+BlockConstructorMixin.__setSelected = function(selected) {
+  selected = !!selected;
+  if (this.frontends.selected !== selected) {
+    this.frontends.selected = selected;
+    this.saveFrontends();
+    for (var channelId in this.channels) {
+      if (this.channels[channelId].type !== 'web') {
+        this.rpc(channelId + ':$setConfig', {selected: this.frontends.selected});
+      }
+    }
+    //this.rpc('$setConfig', {selected: this.frontends.selected});
+  }
+  return this;
+};
+
+BlockConstructorMixin._clear = function() {
+  this.participants = {};
+  this.participantCount = 0;
+  this.save();
+  this.rpc('$clear');
+  // Or use this.sendParticipantCount();
+  this.rpc('control:$setConfig', {participantCount: this.participantCount});
 };
 
 exports.BlockConstructorMixin = BlockConstructorMixin;

@@ -215,7 +215,9 @@ var BlockConstructorMixin = {
     db.set(this.id + 'msgIds', this.msgIds);
     return this;
   },
-  saveMessages: this.saveContent,
+  saveMessages: function() { // temporary only
+    this.saveContent();
+  },
 
   // Channels will inject themselves when they are instantiated
   __injectChannel: function(channel) {
@@ -260,31 +262,6 @@ var BlockConstructorMixin = {
     return '';
   },
 
-  __setVisible: function(visible) {
-    visible = !!visible;
-    if (this.frontends.visible !== visible) {
-      this.frontends.visible = visible;
-      this.saveFrontends();
-      this.rpc('$setConfig', {visible: this.frontends.visible});
-    }
-    return this;
-  },
-
-  __setSelected: function(selected) {
-    selected = !!selected;
-    if (this.frontends.selected !== selected) {
-      this.frontends.selected = selected;
-      this.saveFrontends();
-      for (var channelId in this.channels) {
-        if (this.channels[channelId].type !== 'web') {
-          this.rpc(channelId + ':$setConfig', {selected: this.frontends.selected});
-        }
-      }
-      //this.rpc('$setConfig', {selected: this.frontends.selected});
-    }
-    return this;
-  },
-
   // Or routed via core?
   // TODO disciplined way of resetting the block contents
   $clear: function(req) {
@@ -297,12 +274,7 @@ var BlockConstructorMixin = {
     this.msgs = {};
     this.highlights = [];
     this.picks = [];
-    this.participants = {};
-    this.participantCount = 0;
-    this.save();
-    this.rpc('$clear');
-    // Or use this.sendParticipantCount();
-    this.rpc('control:$setConfig', {participantCount: this.participantCount});
+    this._clear();
 
     for (var channelId in this.channels) {
       if (this.channels[channelId].type !== 'web') {
