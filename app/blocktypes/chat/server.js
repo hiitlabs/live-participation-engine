@@ -56,16 +56,7 @@ function supports(channeltype) {
   return SUPPORTED_CHANNELTYPES.indexOf(channeltype) !== -1
 }
 
-function defaults(obj, props) {
-  if (typeof props === 'function') {
-    props = props();
-  }
-  for (var key in props) {
-    if (obj[key] === undefined) {
-      obj[key] = props[key];
-    }
-  }
-}
+
 
 var TWITTER_ACTIVE = false;
 
@@ -78,7 +69,7 @@ function BlockConstructor(options) {
   this.config = options.config || {};
 
   this.frontends = options.frontends || {};
-  defaults(this.frontends, {
+  common.functions.defaults(this.frontends, {
     active: true,
     selected: false,
     visible: false,

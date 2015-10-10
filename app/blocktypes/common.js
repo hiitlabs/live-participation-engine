@@ -7,5 +7,16 @@ functions.trimWhitespace = function(str) {
   return str;
 }
 
+functions.defaults = function(obj, props) {
+  if (typeof props === 'function') {
+    props = props();
+  }
+  for (var key in props) {
+    if (obj[key] === undefined) {
+      obj[key] = props[key];
+    }
+  }
+}
+
 exports.functions = functions;
 module.exports = exports;
