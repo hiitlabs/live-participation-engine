@@ -304,150 +304,6 @@ var BlockConstructorMixin = {
     }
   },
 
-  $smallMsgsOnScreen: function(req, smallMsgsOnScreen) {
-    if (req.channel.type !== 'control') return;
-    smallMsgsOnScreen = !!smallMsgsOnScreen;
-    if (this.frontends.smallMsgsOnScreen !== smallMsgsOnScreen) {
-      this.frontends.smallMsgsOnScreen = smallMsgsOnScreen;
-      this.saveFrontends();
-      for (var channelId in this.channels) {
-        if (this.channels[channelId].type !== 'web') {
-          this.rpc(channelId + ':$setConfig', {smallMsgsOnScreen: this.frontends.smallMsgsOnScreen});
-        }
-      }
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        smallMsgsOnScreen: this.frontends.smallMsgsOnScreen
-      }, '$smallMsgsOnScreen');
-    }
-  },
-
-  $hideMsgsOnScreen: function(req, hideMsgsOnScreen) {
-    if (req.channel.type !== 'control') return;
-    hideMsgsOnScreen = !!hideMsgsOnScreen;
-    if (this.frontends.hideMsgsOnScreen !== hideMsgsOnScreen) {
-      this.frontends.hideMsgsOnScreen = hideMsgsOnScreen;
-      this.saveFrontends();
-      for (var channelId in this.channels) {
-        if (this.channels[channelId].type !== 'web') {
-          this.rpc(channelId + ':$setConfig', {hideMsgsOnScreen: this.frontends.hideMsgsOnScreen});
-        }
-      }
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        hideMsgsOnScreen: this.frontends.hideMsgsOnScreen
-      }, '$hideMsgsOnScreen');
-    }
-  },
-
-  $hideMsgsOnWeb: function(req, hideMsgsOnWeb) {
-    if (req.channel.type !== 'control') return;
-    hideMsgsOnWeb = !!hideMsgsOnWeb;
-    if (this.frontends.hideMsgsOnWeb !== hideMsgsOnWeb) {
-      this.frontends.hideMsgsOnWeb = hideMsgsOnWeb;
-      this.saveFrontends();
-      this.rpc('$setConfig', {hideMsgsOnWeb: this.frontends.hideMsgsOnWeb});
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        hideMsgsOnWeb: this.frontends.hideMsgsOnWeb
-      }, '$hideMsgsOnWeb');
-    }
-  },
-
-  $hideHighlightsOnScreen: function(req, hideHighlightsOnScreen) {
-    if (req.channel.type !== 'control') return;
-    hideHighlightsOnScreen = !!hideHighlightsOnScreen;
-    if (this.frontends.hideHighlightsOnScreen !== hideHighlightsOnScreen) {
-      this.frontends.hideHighlightsOnScreen = hideHighlightsOnScreen;
-      this.saveFrontends();
-      for (var channelId in this.channels) {
-        if (this.channels[channelId].type !== 'web') {
-          this.rpc(channelId + ':$setConfig', {hideHighlightsOnScreen: this.frontends.hideHighlightsOnScreen});
-        }
-      }
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        hideHighlightsOnScreen: this.frontends.hideHighlightsOnScreen
-      }, '$hideHighlightsOnScreen');
-    }
-  },
-
-  $setModerated: function(req, moderated) {
-    if (req.channel.type !== 'control') return;
-    moderated = !!moderated;
-    if (this.frontends.moderated !== moderated) {
-      this.frontends.moderated = moderated;
-      this.saveFrontends();
-      for (var channelId in this.channels) {
-        if (this.channels[channelId].type !== 'web') {
-          this.rpc(channelId + ':$setConfig', {moderated: this.frontends.moderated});
-        }
-      }
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        moderated: this.frontends.moderated
-      }, '$setModerated');
-    }
-  },
-
-  $usernames: function(req, usernames) {
-    if (req.channel.type !== 'control') return;
-    usernames = !!usernames;
-    if (this.frontends.usernames !== usernames) {
-      this.frontends.usernames = usernames;
-      this.saveFrontends();
-      this.rpc('$setConfig', {usernames: this.frontends.usernames});
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        usernames: this.frontends.usernames
-      }, '$usernames');
-    }
-  },
-
-  $editingButtons: function(req, editingButtons) {
-    if (req.channel.type !== 'control') return;
-    editingButtons = !!editingButtons;
-    if (this.frontends.editingButtons !== editingButtons) {
-      this.frontends.editingButtons = editingButtons;
-      this.saveFrontends();
-      this.rpc('$setConfig', {editingButtons: this.frontends.editingButtons});
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        editingButtons: this.frontends.editingButtons
-      }, '$editingButtons');
-    }
-  },
-
-  $onlyOneSend: function(req, onlyOneSend) {
-    if (req.channel.type !== 'control') return;
-    onlyOneSend = !!onlyOneSend;
-    if (this.frontends.onlyOneSend !== onlyOneSend) {
-      this.frontends.onlyOneSend = onlyOneSend;
-      this.saveFrontends();
-      this.rpc('$setConfig', {onlyOneSend: this.frontends.onlyOneSend});
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        onlyOneSend: this.frontends.onlyOneSend
-      }, '$onlyOneSend');
-    }
-  },
-
   addMessage: function(msg) {
     this.msgs[msg.id] = msg;
     this.msgIds.push(msg.id);
@@ -1023,10 +879,10 @@ var BlockConstructorMixin = {
 
 };
 
-BlockConstructor.prototype.db = db;
-
 // import common mixin
+BlockConstructor.prototype.db = db;
 for( var f in common.BlockConstructorMixin ) {
+  // todo: only use common if not defined above
   BlockConstructorMixin[ f ] = common.BlockConstructorMixin[ f ];
 }
 

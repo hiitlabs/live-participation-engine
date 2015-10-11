@@ -541,10 +541,10 @@ function initMsgsSizeOnScreen(block) {
       $button.on('click', function(ev) {
         if (block.config.smallMsgsOnScreen) {
           buttonOn();
-          block.rpc('$smallMsgsOnScreen', false);
+          block.rpc('$updateFrontends', 'smallMsgsOnScreen', false);
         } else {
           buttonOff();
-          block.rpc('$smallMsgsOnScreen', true);
+          block.rpc('$updateFrontends', 'smallMsgsOnScreen', true);
         }
         return false;
       });
@@ -611,10 +611,10 @@ function initHideMsgsOnScreen(block) {
       $button.on('click', function(ev) {
         if (block.config.hideMsgsOnScreen) {
           buttonOn();
-          block.rpc('$hideMsgsOnScreen', false);
+          block.rpc('$updateFrontends', 'hideMsgsOnScreen', false);
         } else {
           buttonOff();
-          block.rpc('$hideMsgsOnScreen', true);
+          block.rpc('$updateFrontends', 'hideMsgsOnScreen', true);
         }
         return false;
       });
@@ -677,10 +677,10 @@ function initHideMsgsOnWeb(block) {
       $button.on('click', function(ev) {
         if (block.config.hideMsgsOnWeb) {
           buttonOn();
-          block.rpc('$hideMsgsOnWeb', false);
+          block.rpc('$updateFrontends', 'hideMsgsOnWeb', false);
         } else {
           buttonOff();
-          block.rpc('$hideMsgsOnWeb', true);
+          block.rpc('$updateFrontends', 'hideMsgsOnWeb', true);
         }
         return false;
       });
@@ -778,10 +778,10 @@ function initModeration(block) {
       $button.on('click', function(ev) {
         if (block.config.moderated) {
           buttonOff();
-          block.rpc('$setModerated', false);
+          block.rpc( '$updateFrontends', 'moderated', false);
         } else {
           buttonOn();
-          block.rpc('$setModerated', true);
+          block.rpc( '$updateFrontends', 'moderated',  true);
         }
         return false;
       });
@@ -830,10 +830,10 @@ function initUsernames(block) {
       $button.on('click', function(ev) {
         if (block.config.usernames) {
           buttonOff();
-          block.rpc('$usernames', false);
+          block.rpc('$updateFrontends', 'usernames', false);
         } else {
           buttonOn();
-          block.rpc('$usernames', true);
+          block.rpc('$updateFrontends', 'usernames', true);
         }
         return false;
       });
@@ -898,10 +898,10 @@ function initEditing(block) {
       $button.on('click', function(ev) {
         if (block.config.editingButtons) {
           buttonOff();
-          block.rpc('$editingButtons', false);
+          block.rpc('$updateFrontends', 'editingButtons', false);
         } else {
           buttonOn();
-          block.rpc('$editingButtons', true);
+          block.rpc('$updateFrontends', 'editingButtons', true);
         }
         return false;
       });
@@ -1015,10 +1015,10 @@ function initOnlyOneSend(block) {
       $button.on('click', function(ev) {
         if (block.config.onlyOneSend) {
           buttonOff();
-          block.rpc('$onlyOneSend', false);
+          block.rpc('$updateFrontends', 'onlyOneSend', false);
         } else {
           buttonOn();
-          block.rpc('$onlyOneSend', true);
+          block.rpc('$updateFrontends', 'onlyOneSend', true);
         }
         return false;
       });

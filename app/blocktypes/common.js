@@ -89,6 +89,7 @@ BlockConstructorMixin['$active'] = function(req, active) {
 };
 
 BlockConstructorMixin['$heading'] = function(req, heading) {
+  console.log("heading update!");
   if (req.channel.type !== 'control') return;
   if (typeof heading !== 'string') return;
   if (this.frontends.heading !== heading) {
@@ -119,6 +120,25 @@ BlockConstructorMixin['$description'] = function(req, description) {
     }, '$description');
   }
 };
+
+BlockConstructorMixin['$updateFrontends'] = function( req , attribute, value ) {
+  if (req.channel.type !== 'control') return;
+  // if( ! attribute in this.frontends ) return;
+  if (this.frontends[ attribute ] !== value ) { // don't update when not needed
+    this.frontends[ attribute ] = value;
+    this.saveFrontends();
+    var newConf = {};
+    newConf[ attribute ] = value;
+    this.rpc('$setConfig', newConf );
+    console.info({
+      userId: req.user.id,
+      channelId: req.channel.id,
+      blockId: this.id,
+      attribute: attribute,
+      value: value,
+    }, '$updateFrontends');
+  }
+}
 
 BlockConstructorMixin.__setVisible = function(visible) {
   visible = !!visible;

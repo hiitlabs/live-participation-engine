@@ -322,10 +322,10 @@ function initToggleHighlightsOnScreen(block) {
       $button.on('click', function(ev) {
         if (block.config.hideHighlightsOnScreen) {
           buttonOn();
-          block.rpc('$hideHighlightsOnScreen', false);
+          block.rpc('$updateFrontends', 'hideHighlightsOnScreen', false);
         } else {
           buttonOff();
-          block.rpc('$hideHighlightsOnScreen', true);
+          block.rpc('$updateFrontends', 'hideHighlightsOnScreen', true);
         }
         return false;
       });
@@ -419,4 +419,3 @@ function initClearPicks(block) {
     $newButton().appendTo(block.$minibar);
   }
 }
-
