@@ -99,6 +99,7 @@ function initMessagingBasics(block) {
   var $sendBtn = block.$el.find('#' + block.id + '-send');
   $sendBtn.on('click', function(ev) {
     var text = $inputField.val();
+    var mood = block.$el.find('input:radio[name=mood]:checked').val();
     text = trimWhitespace(text);
     if (!text) {
       $inputField.val('');
@@ -109,7 +110,10 @@ function initMessagingBasics(block) {
       return false;
     }
 
-    var msg = {text: text};
+    var msg = {
+      text: text,
+      mood: mood
+    };
     // For now, clear text field right away (could lose msg on failed send)
     // to prevent duplicate sends on slow sends
     $inputField.val('');
@@ -132,6 +136,7 @@ function initMessagingBasics(block) {
   // TODO consolidate with above! Only change is withUsername
   $sendWithUsernameBtn.on('click', function(ev) {
     var text = $inputField.val();
+    var mood = block.$el.find('input:radio[name=mood]:checked').val();
     text = trimWhitespace(text);
     if (!text) {
       $inputField.val('');
@@ -143,7 +148,8 @@ function initMessagingBasics(block) {
     }
     var msg = {
       text: text,
-      withUsername: true
+      withUsername: true,
+      mood: mood
     };
     $inputField.val('');
     $inputField.blur();
@@ -175,6 +181,7 @@ function initMessagingBasics(block) {
 
 
 function trimWhitespace(str) {
+  //Could use trim()
   return str.replace(/^\s+|\s+$/g, '');
 }
 

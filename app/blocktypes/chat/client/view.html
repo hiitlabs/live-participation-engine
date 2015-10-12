@@ -1,52 +1,63 @@
 <!-- TODO clean up -->
 <? if (__SCREEN__) { ?>
 <div id="{!=$$.id}" class="blockview block-__BLOCKTYPE__">
-<? } else if (__CONTROL__) { ?>
-<div id="{!=$$.id}" style="border-top:1px dashed #ddd;">
-<? } else { ?>
-<div id="{!=$$.id}" style="border-top:1px dashed #ddd; padding-top:1em; margin-bottom:1em;">
-<? } ?>
-
-  <? if (__SCREEN__) { ?>
-    <h1 id="{!=$$.id}-heading"></h1>
-
-    <!-- TODO convert inline styles to to classes -->
-    <ol id="{!=$$.id}-msgs" style="list-style-type:none;"></ol>
-    <ol id="{!=$$.id}-highlights" style="position:absolute;top:13%;z-index:10;list-style-type:none;" class="highlights"></ol>
-
-  <? } else { ?>
-
-    <? if (__CONTROL__) { ?>
-      <div id="{!=$$.id}-toolbar"></div>
-    <? } ?>
-
-    <div id="{!=$$.id}-contents" style="padding-bottom:1em">
-      <!-- collapsible content -->
-
-      <h4 id="{!=$$.id}-heading"></h4>
-
-      <p id="{!=$$.id}-description"></p>
-
-      <? if (__CONTROL__ || __STAGE__) { ?>
-        <div id="{!=$$.id}-picks" style="margin-bottom:1em;"></div>
+  <? } else if (__CONTROL__) { ?>
+  <div id="{!=$$.id}" style="border-top:1px dashed #ddd;">
+    <? } else { ?>
+    <div id="{!=$$.id}" style="border-top:1px dashed #ddd; padding-top:1em; margin-bottom:1em;">
       <? } ?>
 
-      <form id="{!=$$.id}-form" role="form" style="padding-bottom:1em">
-        <div class="row">
-          <div class="col-lg-6">
-            <textarea id="{!=$$.id}-input" rows="2" autocomplete="off" class="form-control"></textarea>
+      <? if (__SCREEN__) { ?>
+      <h1 id="{!=$$.id}-heading"></h1>
+
+      <!-- TODO convert inline styles to to classes -->
+      <ol id="{!=$$.id}-msgs" style="list-style-type:none;"></ol>
+      <ol id="{!=$$.id}-highlights" style="position:absolute;top:13%;z-index:10;list-style-type:none;"
+          class="highlights"></ol>
+
+      <? } else { ?>
+
+      <? if (__CONTROL__) { ?>
+      <div id="{!=$$.id}-toolbar"></div>
+      <? } ?>
+
+      <div id="{!=$$.id}-contents" style="padding-bottom:1em">
+        <!-- collapsible content -->
+
+        <h4 id="{!=$$.id}-heading"></h4>
+
+        <p id="{!=$$.id}-description"></p>
+
+        <? if (__CONTROL__ || __STAGE__) { ?>
+        <div id="{!=$$.id}-picks" style="margin-bottom:1em;"></div>
+        <? } ?>
+
+        <form id="{!=$$.id}-form" role="form" style="padding-bottom:1em">
+          <div class="row">
+            <div class="col-lg-6">
+              <textarea id="{!=$$.id}-input" rows="2" autocomplete="off" class="form-control"></textarea><br>
+              <label>How are you feeling?</label><br>
+              <label for="moodGood">
+              <input type="radio" name="mood" value="good"/>Good</label>
+              <label for="moodConfused">
+              <input type="radio" name="mood" value="confused"/>Confused</label>
+              <label for="moodbored">
+              <input type="radio" name="mood" value="bored"/>Bored</label>
+            </div>
+            <div class="col-lg-6">
+              <button id="{!=$$.id}-send" class="btn btn-primary" type="button">{!=$$.SEND_BTN}</button>
+              <span> </span>
+              <button id="{!=$$.id}-sendWithUsername" class="btn btn-danger" style="display:none" type="button">
+                {!=$$.SENDWITHUSERNAME_BTN}
+              </button>
+            </div>
           </div>
-          <div class="col-lg-6">
-            <button id="{!=$$.id}-send" class="btn btn-primary" type="button">{!=$$.SEND_BTN}</button><span> </span>
-            <button id="{!=$$.id}-sendWithUsername" class="btn btn-danger" style="display:none" type="button">{!=$$.SENDWITHUSERNAME_BTN}</button>
-          </div>
+        </form>
+        <p id="{!=$$.id}-notifyWriting" class="text-center" style="font-style:italic;"></p>
+
+        <div id="{!=$$.id}-msgs">
         </div>
-      </form>
-      <p id="{!=$$.id}-notifyWriting" class="text-center" style="font-style:italic;"></p>
-
-      <div id="{!=$$.id}-msgs">
       </div>
-    </div>
-  <? } ?>
+      <? } ?>
 
-</div>
+    </div>

@@ -614,6 +614,7 @@ var BlockConstructorMixin = {
     }
 
     var text = trimWhitespace(msgIn.text).substring(0, 500);
+    var mood = msgIn.mood;
 
     // var mentions = twitterText.extractMentions(text);
     // if (mentions && mentions.length) {
@@ -644,7 +645,8 @@ var BlockConstructorMixin = {
       username: username,
       q: this.frontends.moderated ? 'x' : '',
       admin: (req.channel.type === 'control'),
-      parent: msgIn.parent
+      parent: msgIn.parent,
+      mood: msgIn.mood
     };
 
     attrs.meta = {
@@ -699,7 +701,8 @@ var BlockConstructorMixin = {
         username: msg.username,
         q: msg.q,
         admin: msg.admin,
-        parent: msg.parent
+        parent: msg.parent,
+        mood: msg.mood
       }
     }, '$msg');
 
@@ -1249,6 +1252,7 @@ function Message(options) {
   this.q = options.q || '';
   this.admin = options.admin || false;
   this.parent = options.parent;
+  this.mood = options.mood || '';
   // if (options.promoted) {
   //   options.promoted = true;
   // }
@@ -1282,6 +1286,7 @@ var MessageMixin = {
       q: this.q,
       admin: this.admin,
       parent: this.parent,
+      mood: this.mood,
       //promoted: this.promoted, // mostly undefined
       tweetId: this.tweetId, // only for tweets, otherwise undefined
       html: this.html // only for tweets, otherwise undefined
@@ -1297,7 +1302,8 @@ var MessageMixin = {
       q: this.q,
       admin: this.admin ? true : undefined,
       username: this.username ? this.username : '',
-      parent: this.parent ? this.parent : undefined
+      parent: this.parent ? this.parent : undefined,
+      mood: this.mood ? this.mood : undefined
       //promoted: this.promoted ? true : undefined
       //isWire: true
     };
