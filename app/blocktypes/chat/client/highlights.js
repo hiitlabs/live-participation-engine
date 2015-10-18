@@ -22,6 +22,8 @@
 
 var siteConfig = require('/core').config;
 
+var common = require('./commonClient.js');
+
 if (__SCREEN__) {
   var highlightView = require('./highlight.html');
 }
@@ -297,51 +299,12 @@ function initPickButtons(block) {
 }
 
 
+
+
 function initToggleHighlightsOnScreen(block) {
-  if (__CONTROL__ || __STAGE__) {
 
-    function $newButton() {
-      var buttonStr = '<a class="btn btn-sm" href="#"></a>';
-      var $button = $(buttonStr);
-      //$button.tooltip({placement: 'auto top', delay: {show: 700, hide: 0}, container: 'body'});
-
-      function buttonOff() {
-        $button.html('<span class="text-warning"><span class="glyphicon glyphicon-unchecked"></span> ' + dict.SCREENHIGHLIGHTS_BTN_OFF + '</span>');
-        $button.attr('title', dict.SCREENHIGHLIGHTS_BTN_OFF_HOVER);
-        //$button.tooltip('fixTitle');
-        //$button.tooltip('hide');
-      }
-
-      function buttonOn() {
-        $button.html('<span class="text-warning"><span class="glyphicon glyphicon-check"></span> ' + dict.SCREENHIGHLIGHTS_BTN_ON + '</span>');
-        $button.attr('title', dict.SCREENHIGHLIGHTS_BTN_ON_HOVER);
-        //$button.tooltip('fixTitle');
-        //$button.tooltip('hide');
-      }
-
-      $button.on('click', function(ev) {
-        if (block.config.hideHighlightsOnScreen) {
-          buttonOn();
-          block.rpc('$updateFrontends', 'hideHighlightsOnScreen', false);
-        } else {
-          buttonOff();
-          block.rpc('$updateFrontends', 'hideHighlightsOnScreen', true);
-        }
-        return false;
-      });
-      block.on('change:hideHighlightsOnScreen', function(hidden) {
-        if (hidden) {
-          buttonOff();
-        } else {
-          buttonOn();
-        }
-      });
-
-      return $button;
-    }
-
-    $newButton().appendTo(block.$minibar);
-  }
+  if (__CONTROL__ || __STAGE__)
+  common.controlToggle( block, 'hideHighlightsOnScreen' , dict.SCREENHIGHLIGHTS_BTN_OFF, dict.SCREENHIGHLIGHTS_BTN_ON );
 
   if (__CONTROL__ || __SCREEN__) {
 
