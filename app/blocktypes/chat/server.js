@@ -51,7 +51,7 @@ if (SiteConfig.CONNECT_TWITTER) {
 var common = require('../common.js')
 
 // TODO get this from block package.json or somewhere
-var SUPPORTED_CHANNELTYPES = ['web', 'control', 'stage', 'screen'];
+var SUPPORTED_CHANNELTYPES = ['web', 'control', 'stage', 'screen', 'ceiling'];
 function supports(channeltype) {
   return SUPPORTED_CHANNELTYPES.indexOf(channeltype) !== -1
 }

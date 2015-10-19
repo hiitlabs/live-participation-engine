@@ -34,7 +34,8 @@
     "screen",
     "control",
     "stage",
-    "web"
+    "web",
+    "ceiling"
   ],
   "MAIN_CHANNEL": "web",
   "VISIBLE_BLOCKTYPES": [
@@ -64,6 +65,12 @@
       "type": "stage",
       "route": "stage",
       "title": "Presemo Stage"
+    },
+    {
+      "id": "ceiling",
+      "type": "ceiling",
+      "route": "ceiling",
+      "title": "Presemo Ceiling"
     },
     {
       "id": "web",
