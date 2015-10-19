@@ -47,6 +47,8 @@ var cleancss = require('clean-css');
 var zlib = require('zlib');
 var DEV = require('./DEV');
 
+var SiteConfig = require('./SiteConfig');
+
 var BlockBuilderSync = function build(blocktype, buildDone) {
   debug('build called on %s', blocktype);
 
@@ -90,7 +92,8 @@ function continueBuild(BLOCKTYPE, BLOCK_DIR, CLIENT_DIR,
 
   debug('build continuing on %s', BLOCK_DIR);
 
-  var CHANNELTYPES = ['web', 'screen', 'control', 'stage'];
+  var CHANNELTYPES = SiteConfig.DEFAULT_CHANNELINSTANCES.map( function(a) { return a.id; } );
+
   var LANGUAGES = ['en', 'fi'];
 
   var REQUIRED_DIRS = [];
@@ -253,11 +256,13 @@ function continueBuild(BLOCKTYPE, BLOCK_DIR, CLIENT_DIR,
       STAGING: false,
       PRODUCTION: false,
       CHANNELTYPE: '',
-      WEB: false,
-      CONTROL: false,
-      STAGE: false,
-      SCREEN: false
     };
+
+    // introduce channel condigurations
+    var CHANNELTYPES = SiteConfig.DEFAULT_CHANNELINSTANCES.map( function(a) { return a.id.toUpperCase(); } );
+    CHANNELTYPES.forEach( function(a) {
+      BUILD_CONSTANTS[ a ] = false;
+    } )
 
     // Currently a global
     BUILD_CONSTANTS.BUILDENV = BUILDENV.toUpperCase();
