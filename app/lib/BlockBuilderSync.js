@@ -256,7 +256,8 @@ function continueBuild(BLOCKTYPE, BLOCK_DIR, CLIENT_DIR,
       WEB: false,
       CONTROL: false,
       STAGE: false,
-      SCREEN: false
+      SCREEN: false,
+      CEILING: false
     };
 
     // Currently a global

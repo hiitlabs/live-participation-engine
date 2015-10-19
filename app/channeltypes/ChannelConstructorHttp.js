@@ -81,6 +81,16 @@ function setup(channel) {
       };
       httpResponse.send(channel.demoFrontendTemplate(params));
     });
+
+    loadCeilingFrontendTemplate(channel);
+    HttpRouter.get('/' + SiteConfig.SITEROUTE + '/ceiling', function(httpRequest, httpResponse) {
+      var params = {
+        CHANNELTITLE: 'Ceiling',
+        HOSTNAME: SiteConfig.HOSTNAME,
+        SITEROUTE: SiteConfig.SITEROUTE
+      };
+      httpResponse.send(channel.ceilingFrontendTemplate(params));
+    });
   }
 }
 
@@ -217,6 +227,12 @@ function loadDemoFrontendTemplate(channel) {
   indexHtml = minifyHtml(indexHtml);
   channel.demoFrontendTemplate = template(indexHtml);
 };
+
+function loadCeilingFrontendTemplate(channel) {
+  var indexHtml = fs.readFileSync(join(__dirname, 'ceiling.html'), 'utf-8');
+  indexHtml = minifyHtml(indexHtml);
+  channel.ceilingFrontendTemplate = template(indexHtml);
+}
 
 /**
  * Express route intercepting /site/channel/ (or /site for default channel)
