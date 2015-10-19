@@ -48,22 +48,15 @@ if (SiteConfig.CONNECT_TWITTER) {
   });
 }
 
+var common = require('../common.js')
+
 // TODO get this from block package.json or somewhere
 var SUPPORTED_CHANNELTYPES = ['web', 'control', 'stage', 'screen'];
 function supports(channeltype) {
   return SUPPORTED_CHANNELTYPES.indexOf(channeltype) !== -1
 }
 
-function defaults(obj, props) {
-  if (typeof props === 'function') {
-    props = props();
-  }
-  for (var key in props) {
-    if (obj[key] === undefined) {
-      obj[key] = props[key];
-    }
-  }
-}
+
 
 var TWITTER_ACTIVE = false;
 
@@ -76,7 +69,7 @@ function BlockConstructor(options) {
   this.config = options.config || {};
 
   this.frontends = options.frontends || {};
-  defaults(this.frontends, {
+  common.functions.defaults(this.frontends, {
     active: true,
     selected: false,
     visible: false,
@@ -178,12 +171,12 @@ var BlockConstructorStatics = {
     if (typeof dangerousFormObject.heading !== 'string') {
       dangerousFormObject.heading = '';
     }
-    blockConfig.frontends.heading = trimWhitespace(dangerousFormObject.heading).substring(0, 500);
+    blockConfig.frontends.heading = common.functions.trimWhitespace(dangerousFormObject.heading).substring(0, 500);
 
     if (typeof dangerousFormObject.description !== 'string') {
       dangerousFormObject.description = '';
     }
-    blockConfig.frontends.description = trimWhitespace(dangerousFormObject.description).substring(0, 2000);
+    blockConfig.frontends.description = common.functions.trimWhitespace(dangerousFormObject.description).substring(0, 2000);
 
     debug('validated properties: %j', blockConfig);
 
@@ -216,28 +209,9 @@ var BlockConstructorStatics = {
 
 mergeInto(BlockConstructor, BlockConstructorStatics);
 
-
-
 var BlockConstructorMixin = {
 
-  save: function() {
-    db.set(this.id, this.config);
-    db.set(this.id + 'msgIds', this.msgIds);
-    db.set(this.id + 'frontends', this.frontends);
-    db.set(this.id + 'participants', this.participants);
-    db.set(this.id + 'participantCount', this.participantCount);
-    return this;
-  },
-  saveFrontends: function() {
-    db.set(this.id + 'frontends', this.frontends);
-    return this;
-  },
-  saveParticipants: function() {
-    db.set(this.id + 'participants', this.participants);
-    db.set(this.id + 'participantCount', this.participantCount);
-    return this;
-  },
-  saveMessages: function() {
+  saveContent: function() {
     db.set(this.id + 'msgIds', this.msgIds);
     return this;
   },
@@ -285,31 +259,6 @@ var BlockConstructorMixin = {
     return '';
   },
 
-  __setVisible: function(visible) {
-    visible = !!visible;
-    if (this.frontends.visible !== visible) {
-      this.frontends.visible = visible;
-      this.saveFrontends();
-      this.rpc('$setConfig', {visible: this.frontends.visible});
-    }
-    return this;
-  },
-
-  __setSelected: function(selected) {
-    selected = !!selected;
-    if (this.frontends.selected !== selected) {
-      this.frontends.selected = selected;
-      this.saveFrontends();
-      for (var channelId in this.channels) {
-        if (this.channels[channelId].type !== 'web') {
-          this.rpc(channelId + ':$setConfig', {selected: this.frontends.selected});
-        }
-      }
-      //this.rpc('$setConfig', {selected: this.frontends.selected});
-    }
-    return this;
-  },
-
   // Or routed via core?
   // TODO disciplined way of resetting the block contents
   $clear: function(req) {
@@ -322,12 +271,7 @@ var BlockConstructorMixin = {
     this.msgs = {};
     this.highlights = [];
     this.picks = [];
-    this.participants = {};
-    this.participantCount = 0;
-    this.save();
-    this.rpc('$clear');
-    // Or use this.sendParticipantCount();
-    this.rpc('control:$setConfig', {participantCount: this.participantCount});
+    this._clear();
 
     for (var channelId in this.channels) {
       if (this.channels[channelId].type !== 'web') {
@@ -348,7 +292,7 @@ var BlockConstructorMixin = {
     if (req.channel.type !== 'control') return;
     if (typeof blockGroup !== 'string') return;
     if (this.frontends.blockGroup !== blockGroup) {
-      this.frontends.blockGroup = trimWhitespace(blockGroup).substring(0, 100);
+      this.frontends.blockGroup = common.functions.trimWhitespace(blockGroup).substring(0, 100);
       this.saveFrontends();
       this.rpc('$setConfig', {blockGroup: this.frontends.blockGroup});
       console.info({
@@ -360,203 +304,11 @@ var BlockConstructorMixin = {
     }
   },
 
-  $active: function(req, active) {
-    if (req.channel.type !== 'control') return;
-    active = !!active;
-    if (this.frontends.active !== active) {
-      this.frontends.active = active;
-      this.saveFrontends();
-      this.rpc('$setConfig', {active: this.frontends.active});
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        active: this.frontends.active
-      }, '$active');
-    }
-  },
-
-  $smallMsgsOnScreen: function(req, smallMsgsOnScreen) {
-    if (req.channel.type !== 'control') return;
-    smallMsgsOnScreen = !!smallMsgsOnScreen;
-    if (this.frontends.smallMsgsOnScreen !== smallMsgsOnScreen) {
-      this.frontends.smallMsgsOnScreen = smallMsgsOnScreen;
-      this.saveFrontends();
-      for (var channelId in this.channels) {
-        if (this.channels[channelId].type !== 'web') {
-          this.rpc(channelId + ':$setConfig', {smallMsgsOnScreen: this.frontends.smallMsgsOnScreen});
-        }
-      }
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        smallMsgsOnScreen: this.frontends.smallMsgsOnScreen
-      }, '$smallMsgsOnScreen');
-    }
-  },
-
-  $hideMsgsOnScreen: function(req, hideMsgsOnScreen) {
-    if (req.channel.type !== 'control') return;
-    hideMsgsOnScreen = !!hideMsgsOnScreen;
-    if (this.frontends.hideMsgsOnScreen !== hideMsgsOnScreen) {
-      this.frontends.hideMsgsOnScreen = hideMsgsOnScreen;
-      this.saveFrontends();
-      for (var channelId in this.channels) {
-        if (this.channels[channelId].type !== 'web') {
-          this.rpc(channelId + ':$setConfig', {hideMsgsOnScreen: this.frontends.hideMsgsOnScreen});
-        }
-      }
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        hideMsgsOnScreen: this.frontends.hideMsgsOnScreen
-      }, '$hideMsgsOnScreen');
-    }
-  },
-
-  $hideMsgsOnWeb: function(req, hideMsgsOnWeb) {
-    if (req.channel.type !== 'control') return;
-    hideMsgsOnWeb = !!hideMsgsOnWeb;
-    if (this.frontends.hideMsgsOnWeb !== hideMsgsOnWeb) {
-      this.frontends.hideMsgsOnWeb = hideMsgsOnWeb;
-      this.saveFrontends();
-      this.rpc('$setConfig', {hideMsgsOnWeb: this.frontends.hideMsgsOnWeb});
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        hideMsgsOnWeb: this.frontends.hideMsgsOnWeb
-      }, '$hideMsgsOnWeb');
-    }
-  },
-
-  $hideHighlightsOnScreen: function(req, hideHighlightsOnScreen) {
-    if (req.channel.type !== 'control') return;
-    hideHighlightsOnScreen = !!hideHighlightsOnScreen;
-    if (this.frontends.hideHighlightsOnScreen !== hideHighlightsOnScreen) {
-      this.frontends.hideHighlightsOnScreen = hideHighlightsOnScreen;
-      this.saveFrontends();
-      for (var channelId in this.channels) {
-        if (this.channels[channelId].type !== 'web') {
-          this.rpc(channelId + ':$setConfig', {hideHighlightsOnScreen: this.frontends.hideHighlightsOnScreen});
-        }
-      }
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        hideHighlightsOnScreen: this.frontends.hideHighlightsOnScreen
-      }, '$hideHighlightsOnScreen');
-    }
-  },
-
-  $setModerated: function(req, moderated) {
-    if (req.channel.type !== 'control') return;
-    moderated = !!moderated;
-    if (this.frontends.moderated !== moderated) {
-      this.frontends.moderated = moderated;
-      this.saveFrontends();
-      for (var channelId in this.channels) {
-        if (this.channels[channelId].type !== 'web') {
-          this.rpc(channelId + ':$setConfig', {moderated: this.frontends.moderated});
-        }
-      }
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        moderated: this.frontends.moderated
-      }, '$setModerated');
-    }
-  },
-
-  $usernames: function(req, usernames) {
-    if (req.channel.type !== 'control') return;
-    usernames = !!usernames;
-    if (this.frontends.usernames !== usernames) {
-      this.frontends.usernames = usernames;
-      this.saveFrontends();
-      this.rpc('$setConfig', {usernames: this.frontends.usernames});
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        usernames: this.frontends.usernames
-      }, '$usernames');
-    }
-  },
-
-  $editingButtons: function(req, editingButtons) {
-    if (req.channel.type !== 'control') return;
-    editingButtons = !!editingButtons;
-    if (this.frontends.editingButtons !== editingButtons) {
-      this.frontends.editingButtons = editingButtons;
-      this.saveFrontends();
-      this.rpc('$setConfig', {editingButtons: this.frontends.editingButtons});
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        editingButtons: this.frontends.editingButtons
-      }, '$editingButtons');
-    }
-  },
-
-  $onlyOneSend: function(req, onlyOneSend) {
-    if (req.channel.type !== 'control') return;
-    onlyOneSend = !!onlyOneSend;
-    if (this.frontends.onlyOneSend !== onlyOneSend) {
-      this.frontends.onlyOneSend = onlyOneSend;
-      this.saveFrontends();
-      this.rpc('$setConfig', {onlyOneSend: this.frontends.onlyOneSend});
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        onlyOneSend: this.frontends.onlyOneSend
-      }, '$onlyOneSend');
-    }
-  },
-
-  $heading: function(req, heading) {
-    if (req.channel.type !== 'control') return;
-    if (typeof heading !== 'string') return;
-    if (this.frontends.heading !== heading) {
-      this.frontends.heading = trimWhitespace(heading).substring(0, 500);
-      this.saveFrontends();
-      this.rpc('$setConfig', {heading: this.frontends.heading});
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        heading: this.frontends.heading
-      }, '$heading');
-    }
-  },
-  $description: function(req, description) {
-    if (req.channel.type !== 'control') return;
-    if (typeof description !== 'string') return;
-    if (this.frontends.description !== description) {
-      this.frontends.description = trimWhitespace(description).substring(0, 2000);
-      this.saveFrontends();
-      this.rpc('$setConfig', {description: this.frontends.description});
-      console.info({
-        userId: req.user.id,
-        channelId: req.channel.id,
-        blockId: this.id,
-        description: this.frontends.description
-      }, '$description');
-    }
-  },
-  // TODO Image
-
   addMessage: function(msg) {
     this.msgs[msg.id] = msg;
     this.msgIds.push(msg.id);
     //this.save();
-    this.saveMessages(); // TODO throttled version
+    this.saveContent(); // TODO throttled version
   },
 
   $writing: function(req) {
@@ -613,8 +365,8 @@ var BlockConstructorMixin = {
       username = '';
     }
 
-    var text = trimWhitespace(msgIn.text).substring(0, 500);
-    var mood = msgIn.mood;
+
+    var text = common.functions.trimWhitespace(msgIn.text).substring(0, 500);
 
     // var mentions = twitterText.extractMentions(text);
     // if (mentions && mentions.length) {
@@ -645,8 +397,7 @@ var BlockConstructorMixin = {
       username: username,
       q: this.frontends.moderated ? 'x' : '',
       admin: (req.channel.type === 'control'),
-      parent: msgIn.parent,
-      mood: msgIn.mood
+      parent: msgIn.parent
     };
 
     attrs.meta = {
@@ -701,8 +452,7 @@ var BlockConstructorMixin = {
         username: msg.username,
         q: msg.q,
         admin: msg.admin,
-        parent: msg.parent,
-        mood: msg.mood
+        parent: msg.parent
       }
     }, '$msg');
 
@@ -729,7 +479,7 @@ var BlockConstructorMixin = {
     // (keep last message for each contributor and compare)
     // perhaps also throttle flooding from same person
 
-    var text = trimWhitespace(msgIn.text).substring(0, 500);
+    var text = common.functions.trimWhitespace(msgIn.text).substring(0, 500);
 
     if (!this.msgs.hasOwnProperty(msgIn.id)) {
       return;
@@ -1049,31 +799,6 @@ var BlockConstructorMixin = {
       highlights: this.highlights
     }, '$clearTags');
   },
-
-  updateParticipantCount: function(userId) {
-    if (this.participants[userId]) return;
-
-    this.participants[userId] = true; // TODO later more info
-    this.participantCount++;
-
-    console.info({
-      blockId: this.id,
-      participantCount: this.participantCount
-    }, 'chatParticipantCount');
-
-    if (!this.sendParticipantCountThrottled) {
-      this.sendParticipantCountThrottled = throttle(this.sendParticipantCount, 1000);
-    }
-    this.sendParticipantCountThrottled();
-    // TODO throttled save
-    this.saveParticipants();
-  },
-
-  sendParticipantCount: function() {
-    // TODO Will send only to control for now
-    this.rpc('control:$setConfig', {participantCount: this.participantCount});
-  },
-
   // TODO this single getter or multiple, for each feature?
   // Usually better to have consolidated in config and them
   // perhaps separate calls for features.
@@ -1154,6 +879,13 @@ var BlockConstructorMixin = {
   }
 
 };
+
+// import common mixin
+BlockConstructor.prototype.db = db;
+for( var f in common.BlockConstructorMixin ) {
+  // todo: only use common if not defined above
+  BlockConstructorMixin[ f ] = common.BlockConstructorMixin[ f ];
+}
 
 mergeInto(BlockConstructor.prototype, BlockConstructorMixin);
 
@@ -1252,7 +984,6 @@ function Message(options) {
   this.q = options.q || '';
   this.admin = options.admin || false;
   this.parent = options.parent;
-  this.mood = options.mood || '';
   // if (options.promoted) {
   //   options.promoted = true;
   // }
@@ -1286,7 +1017,6 @@ var MessageMixin = {
       q: this.q,
       admin: this.admin,
       parent: this.parent,
-      mood: this.mood,
       //promoted: this.promoted, // mostly undefined
       tweetId: this.tweetId, // only for tweets, otherwise undefined
       html: this.html // only for tweets, otherwise undefined
@@ -1302,8 +1032,7 @@ var MessageMixin = {
       q: this.q,
       admin: this.admin ? true : undefined,
       username: this.username ? this.username : '',
-      parent: this.parent ? this.parent : undefined,
-      mood: this.mood ? this.mood : undefined
+      parent: this.parent ? this.parent : undefined
       //promoted: this.promoted ? true : undefined
       //isWire: true
     };
@@ -1535,13 +1264,6 @@ function processTweet(tweet, block) {
   }
 
   // TODO logging
-}
-
-function trimWhitespace(str) {
-  str = str.replace(/\s/g, ' '); // convert all non-printable chars to a space
-  str = str.replace(/^\s+|\s+$/g, ''); // begin end
-  str = str.replace(/\s\s+/g, ' '); // middle
-  return str;
 }
 
 // todo get more messages

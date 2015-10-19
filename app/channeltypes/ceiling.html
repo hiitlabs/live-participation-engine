@@ -25,7 +25,7 @@
           <link rel="apple-touch-icon-precomposed" href="/{!=$$.SITEROUTE}/common/core/img/apple-touch-icon-57x57-precomposed.png?{!=$$.VERSION}">
           <link rel="shortcut icon" href="/{!=$$.SITEROUTE}/common/core/img/apple-touch-icon.png?{!=$$.VERSION}">
   -->
-
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc= sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
   <!-- <link rel="shortcut icon" href="http://www.example.com/favicon.ico" type="image/x-icon"> -->
 
   <!-- Tile icon for Win8 (144x144 + tile color) -->
@@ -56,27 +56,55 @@
 <![endif]-->
 
 {!=$$.CONTENT}
-<div style="display:inline-block;">
-  <p>Participant view: <br> <a href="http://{!=$$.HOSTNAME}/{!=$$.SITEROUTE}">http://{!=$$.HOSTNAME}/{!=$$.SITEROUTE}</a></p>
-  <iframe src="web" height=600></iframe>
-</div>
-<div style="display:inline-block">
-  <p>Control view: <br> <a href="http://{!=$$.HOSTNAME}/{!=$$.SITEROUTE}/control">http://{!=$$.HOSTNAME}/{!=$$.SITEROUTE}/control</a></p>
-  <iframe src="control" height=600 width=600></iframe>
-</div>
-<div style="display:inline-block">
-  <p>Stage view: <br> <a href="http://{!=$$.HOSTNAME}/{!=$$.SITEROUTE}/stage">http://{!=$$.HOSTNAME}/{!=$$.SITEROUTE}/stage</a></p>
-  <iframe src="stage" height=600></iframe>
-</div>
-<div style="display:inline-block">
-  <p>Screen view: <br> <a href="http://{!=$$.HOSTNAME}/{!=$$.SITEROUTE}/screen">http://{!=$$.HOSTNAME}/{!=$$.SITEROUTE}/screen</a></p>
-  <iframe src="screen" height=600 width=600></iframe>
+
+<div id="container">
+  <div class="row">
+    <div id="top-left" class="col-md-6" style="width: 50%; height:100%;">
+      <h3>Mood</h3>
+      <div class="chart"></div>
+    </div>
+    <div id="top-right" class="col-md-6" style="width: 50%; height:100%;">
+      <h3>Location</h3>
+      <div id="locationContainer" class="col-md-6">
+        <div class="row">
+          <div id="topleftloc" class="col-md-3" style="display: inline-block; width: 50%; height:100%; border-bottom: dashed 1px; border-right: dashed 1px;">topleft</div>
+          <div id="toprightloc" class="col-md-3" style="display: inline-block; width: 50%; height:100%;">topright</div>
+        </div>
+        <div class="row">
+          <div id="bottomleftloc" class="col-md-3" style="display: inline-block; width: 50%; height:100%;">bottomleft</div>
+          <div id="bottomrightloc" class="col-md-3" style="display: inline-block; width: 50%; height:100%; border-top: dashed 1px; border-left: dashed 1px;">bottomright</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div id="bottom-left" class="col-md-6" style="width: 50%; height:100%;">bottom-left</div>
+    <div id="bottom-right" class="col-md-6" style="width: 50%; height:100%;">
+      <div style="display:inline-block;">
+        <p>Participant view: <br> <a href="http://{!=$$.HOSTNAME}/{!=$$.SITEROUTE}">http://{!=$$.HOSTNAME}/{!=$$.SITEROUTE}</a></p>
+        <iframe src="web" height=600></iframe>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!--
+
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
--->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha256-Sk3nkD6mLTMOF0EOpNtsIry+s1CsaqQC1rVLTAy+0yc= sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+
+<!-- Just for demo -->
+<script>
+  var chart = d3.select(".chart");
+  var bar = chart.selectAll("div");
+  bar.data([1, 2, 3, 10, 5])
+    .enter().append("div")
+    .style("width", function(d){return d * 10 + "px";})
+    .style("background-color", "red")
+    .text(function(d){return d;});
+</script>
+
 <!--
 <script src="js/plugins.js"></script>
 <script src="js/main.js"></script>
