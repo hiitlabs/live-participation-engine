@@ -98,8 +98,8 @@ function initMessagingBasics(block) {
   if (__SCREEN__) return; // We don't need interaction yet
 
   var $inputField = block.$el.find('#' + block.id + '-input');
-  var $sendBtn = block.$el.find('#' + block.id + '-send');
-  $sendBtn.on('click', function(ev) {
+
+  var _sendClick = function(ev) {
     var text = $inputField.val();
     text = trimWhitespace(text);
     if (!text) {
@@ -111,7 +111,10 @@ function initMessagingBasics(block) {
       return false;
     }
 
-    var msg = {text: text};
+    var msg = {
+      text: text,
+      withUsername: $(this).attr('id').indexOf('-sendWithUsername') > 0 // check which variant of the button we're in
+    };
     // For now, clear text field right away (could lose msg on failed send)
     // to prevent duplicate sends on slow sends
     $inputField.val('');
@@ -129,39 +132,14 @@ function initMessagingBasics(block) {
     });
 
     return false;
-  });
-  var $sendWithUsernameBtn = block.$el.find('#' + block.id + '-sendWithUsername');
-  // TODO consolidate with above! Only change is withUsername
-  $sendWithUsernameBtn.on('click', function(ev) {
-    var text = $inputField.val();
-    text = trimWhitespace(text);
-    if (!text) {
-      $inputField.val('');
-      return false;
-    }
-    if (text.length > 500) {
-      alert('Max 500 characters, thank you');
-      return false;
-    }
-    var msg = {
-      text: text,
-      withUsername: true
-    };
-    $inputField.val('');
-    $inputField.blur();
-    block.rpc('$msg', msg, function(err) {
-      if (err) return; //something
+  };
 
-      if (siteConfig.ONE_MSG) {
-        if (block.config.onlyOneSend) {
-          // TODO properly, now let's just fake a disabled event (without affecting
-          // block.config.active to prevent reversals)
-          block.emit('change:active', false);
-        }
-      }
-    });
-    return false;
-  });
+  var $sendBtn = block.$el.find('#' + block.id + '-send');
+  $sendBtn.on('click', _sendClick );
+
+  var $sendWithUsernameBtn = block.$el.find('#' + block.id + '-sendWithUsername');
+  $sendWithUsernameBtn.on('click', _sendClick );
+
 
   if (siteConfig.NOTIFYWRITING) {
     var throttledNotify = _.throttle(function() {
