@@ -90,7 +90,7 @@ function continueBuild(BLOCKTYPE, BLOCK_DIR, CLIENT_DIR,
 
   debug('build continuing on %s', BLOCK_DIR);
 
-  var CHANNELTYPES = ['web', 'screen', 'control', 'stage'];
+  var CHANNELTYPES = ['web', 'screen', 'control', 'stage', 'ceiling'];
   var LANGUAGES = ['en', 'fi'];
 
   var REQUIRED_DIRS = [];
@@ -256,7 +256,8 @@ function continueBuild(BLOCKTYPE, BLOCK_DIR, CLIENT_DIR,
       WEB: false,
       CONTROL: false,
       STAGE: false,
-      SCREEN: false
+      SCREEN: false,
+      CEILING: false
     };
 
     // Currently a global
