@@ -71,23 +71,6 @@ BlockConstructorMixin.sendParticipantCount = function() {
   this.rpc('control:$setConfig', {participantCount: this.participantCount});
 };
 
-BlockConstructorMixin['$active'] = function(req, active) {
-  if (req.channel.type !== 'control') return;
-  active = !!active;
-  if (this.frontends.active !== active) {
-    this.frontends.active = active;
-    console.log( this );
-    this.saveFrontends();
-    this.rpc('$setConfig', {active: this.frontends.active});
-    console.info({
-      userId: req.user.id,
-      channelId: req.channel.id,
-      blockId: this.id,
-      active: this.frontends.active
-    }, '$active');
-  }
-};
-
 BlockConstructorMixin['$updateFrontends'] = function( req , attribute, value ) {
   if (req.channel.type !== 'control') return;
   // if( ! attribute in this.frontends ) return;

@@ -392,50 +392,9 @@ function initReplying(block) {
 
 
 function initDisable(block) {
+
   if (__CONTROL__) {
-
-    function $newButton() {
-      var buttonStr = '<a class="btn btn-sm" href="#"></a>';
-      var $button = $(buttonStr);
-      //$button.tooltip({placement: 'auto top', delay: {show: 700, hide: 0}, container: 'body'});
-
-      function buttonOn() {
-        $button.html('<span class="text-primary"><span class="glyphicon glyphicon-check"></span> ' + dict.DISABLE_BTN + '</span>');
-        $button.attr('title', dict.DISABLE_HOVER);
-        //$button.tooltip('fixTitle');
-        //$button.tooltip('hide');
-      }
-
-      function buttonOff() {
-        $button.html('<span class="text-primary"><span class="glyphicon glyphicon-unchecked"></span> ' + dict.ENABLE_BTN + '</span>');
-        $button.attr('title', dict.ENABLE_HOVER);
-        //$button.tooltip('fixTitle');
-        //$button.tooltip('hide');
-      }
-
-      $button.on('click', function(ev) {
-        if (block.config.active) {
-          buttonOff();
-          block.rpc('$active', false);
-        } else {
-          buttonOn();
-          block.rpc('$active', true);
-        }
-        return false;
-      });
-
-      block.on('change:active', function(enabled) {
-        if (enabled) {
-          buttonOn();
-        } else {
-          buttonOff();
-        }
-      });
-
-      return $button;
-    }
-
-    $newButton().appendTo(block.$minibar);
+    common.controlToggle( block , 'active', dict.DISABLE_BTN, dict.ENABLE_BTN );
   }
 
   // Listen for disable events
