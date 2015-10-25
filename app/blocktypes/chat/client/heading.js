@@ -28,8 +28,6 @@ function initHeading(block, modes ) {
 
   modes.forEach( function( mode ) {
 
-    alert("Set up " + mode );
-
     var $dom = block.$el.find('#' + block.id + '-' + mode);
 
     block.on('change:' + mode, function(newValue) {
