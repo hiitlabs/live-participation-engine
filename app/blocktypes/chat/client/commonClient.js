@@ -74,7 +74,7 @@ module.exports.controlTextField = function( block, key, text, $dom ) { // todo: 
     var data = {};
     data[ key ] = text;
     block.$setConfig( data );
-    block.rpc( '$' + key , text );
+    block.rpc( '$updateFrontends', key , text );
 
     return false;
   });
