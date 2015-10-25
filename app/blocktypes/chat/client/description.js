@@ -45,39 +45,9 @@ function initDescription(block) {
 
 if (__CONTROL__) {
   var initDescriptionEdit = function(block, $description) {
-    $description.attr('title', dict.DESCRIPTION_HOVER);
-    $description.on('click', function() {
-      $description.attr('contenteditable', true); // or el.setAttribute('contenteditable', 'true');
-      $description.focus();
-      return false;
-    });
 
-    $description.on('keydown', function(ev) {
-      if (ev.which == 27) {
-        // Esc, cancel edit
-        $description.text(block.config.description);
-        $description.blur();
-        return false;
-      }
-      if (ev.which == 13) {
-        // Return, save
-        $description.blur();
-        return false;
-      }
-    });
-    $description.on('blur', function() { // or el.onblur =
-      checkAndSend();
-      return false;
-    });
-
-    function checkAndSend() {
-      $description.attr('contenteditable', null);
-      var descriptionText = $description.text();
-      if (descriptionText == block.config.description) return;
-      if (descriptionText === '–') return;
-      block.$setConfig({description: descriptionText});
-      block.rpc('$description', descriptionText);
-    }
+    var common = require('./commonClient.js');
+    common.controlTextField( block, 'description', dict.DESCRIPTION_HOVER, $description );
 
   };
 }

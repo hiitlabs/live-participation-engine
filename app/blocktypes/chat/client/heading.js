@@ -45,39 +45,9 @@ function initHeading(block) {
 
 if (__CONTROL__) {
   var initHeadingEdit = function(block, $heading) {
-    $heading.attr('title', dict.HEADING_HOVER);
-    $heading.on('click', function() {
-      $heading.attr('contenteditable', true); // or el.setAttribute('contenteditable', 'true');
-      $heading.focus();
-      return false;
-    });
 
-    $heading.on('keydown', function(ev) {
-      if (ev.which == 27) {
-        // Esc, cancel edit
-        $heading.text(block.config.heading);
-        $heading.blur();
-        return false;
-      }
-      if (ev.which == 13) {
-        // Return, save
-        $heading.blur();
-        return false;
-      }
-    });
-    $heading.on('blur', function() { // or el.onblur =
-      checkAndSend();
-      return false;
-    });
-
-    function checkAndSend() {
-      $heading.attr('contenteditable', null);
-      var headingText = $heading.text();
-      if (headingText == block.config.heading) return;
-      if (headingText === '-') return;
-      block.$setConfig({heading: headingText});
-      block.rpc('$heading', headingText);
-    }
+    var common = require('./commonClient.js');
+    common.controlTextField( block, 'heading', dict.HEADING_HOVER, $heading );
 
   };
 }
