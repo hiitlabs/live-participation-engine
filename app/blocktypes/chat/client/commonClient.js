@@ -1,6 +1,9 @@
 // TODO: figure how to make this common for all modules
 
-module.exports.controlToggle = function( block , key, text_on, text_off ) {
+module.exports.controlToggle = function( block , key, text_on, text_off, default_state ) {
+
+  default_state = typeof default_state !== 'undefined' ? default_state : false;
+
 
 
   var $button = $('<a>', { class:"btn btn-sm", href:'#', html:'placeholder' } );
@@ -8,7 +11,7 @@ module.exports.controlToggle = function( block , key, text_on, text_off ) {
   // toggle display mode
   var toggle = function( mode ) {
 
-    if( mode ) {
+    if( mode !== default_state ) {
 
       $button.html('<span class="text-warning"><span class="glyphicon glyphicon-unchecked"></span> ' + text_off + '</span>');
 
