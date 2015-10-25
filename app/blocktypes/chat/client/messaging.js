@@ -394,7 +394,7 @@ function initReplying(block) {
 function initDisable(block) {
 
   if (__CONTROL__) {
-    common.controlToggle( block , 'active', dict.DISABLE_BTN, dict.ENABLE_BTN );
+    common.controlToggle( block , 'active', dict.DISABLE_BTN, dict.ENABLE_BTN, true );
   }
 
   // Listen for disable events
