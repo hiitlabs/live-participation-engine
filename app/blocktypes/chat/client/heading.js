@@ -22,32 +22,34 @@ var dict = require('./lang');
 
 exports = module.exports = initHeading;
 
-function initHeading(block) {
+function initHeading(block, modes ) {
 
-  var $heading = block.$el.find('#' + block.id + '-heading');
+  modes = typeof modes !== 'undefined' ? modes : ['heading', 'description']; // by default assume there are two heading type of things
 
-  if (__CONTROL__) {
-    initHeadingEdit(block, $heading);
-  }
+  modes.forEach( function( mode ) {
 
-  block.on('change:heading', function(heading) {
+    alert("Set up " + mode );
+
+    var $dom = block.$el.find('#' + block.id + '-' + mode);
+
+    block.on('change:' + mode, function(newValue) {
+      if (__CONTROL__) {
+        var $toolbarHeading = block.$el.find('#' + block.id + '-toolbar-' + mode);
+        $toolbarHeading.text( newValue );
+        $dom.text( newValue || '-'); // or el.textContent =
+      } else {
+        $dom.text( newValue ); // or el.textContent =
+      }
+    });
+
+    block.emit('change:' + mode, block.config[mode] );
+
     if (__CONTROL__) {
-      //block.$toolbar.find('#' + block.id + '-heading-');
-      var $toolbarHeading = block.$el.find('#' + block.id + '-toolbar-heading');
-      $toolbarHeading.text(heading);
-      $heading.text(heading || '-'); // or el.textContent =
-    } else {
-      $heading.text(heading); // or el.textContent =
-    }
-  });
-  block.emit('change:heading', block.config.heading);
-}
 
-if (__CONTROL__) {
-  var initHeadingEdit = function(block, $heading) {
+      var common = require('./commonClient.js');
+      common.controlTextField( block, mode, dict[ mode + '_HOVER'], $dom );
 
-    var common = require('./commonClient.js');
-    common.controlTextField( block, 'heading', dict.HEADING_HOVER, $heading );
+    };
 
-  };
+  } )
 }
