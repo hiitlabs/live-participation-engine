@@ -69,21 +69,17 @@ function initMessagingBasics(block) {
   if (!block.msgs) block.msgs = [];
   if (!block.msgsById) block.msgsById = {};
 
+  // load previous messages when a "data" call is made
   // TODO get first batch of messages already from block config
   // for fast rendering, just update more via data or specific rpc requests
   block.on('data', function(data) {
     // TODO compare here or somewhere
     if (data.msgs) {
-      block.$msgsIn(data.msgs);
+      for (var i = 0; i < data.msgs.length; i++) {
+        this.$msgIn( data.msgs[i], true);
+      }
     }
   });
-
-  // TODO save to internal this.msgs structure
-  block.$msgsIn = function(msgs) {
-    for (var i = 0; i < msgs.length; i++) {
-      this.$msgIn(msgs[i], true);
-    }
-  };
 
   block.$msgIn = $msgIn;
 
@@ -165,6 +161,8 @@ function $msgIn(msg, immediate) {
   // TODO check existing from dom or from .msgs (to not get duplicates after reconnects)
   // TODO clean up, emit msg to allow quality feature from other module
 
+  // messages can be deleted, handling it here
+
   var existingMsg = this.msgsById[msg.id];
   if (existingMsg) {
     if (existingMsg.q !== msg.q || existingMsg.text !== msg.text) {
@@ -215,24 +213,18 @@ function $msgIn(msg, immediate) {
     return;
   }
 
-
-  var time = moment(msg.time);
-  // TODO localization
-  // TODO perhaps only latest as (1 min ago), update them every 15 secs or so,
-  // then after some time as static timestamps?
-  msg.timeStr = time.format('HH:mm');
-  //msg.timeStr = time.fromNow();
-  msg.timeTitle = time.format();
-
   msg.blockId = this.id;
 
-  this.emit('activity', time);
+  // timestamp
+  var time = moment(msg.time);
+  msg.timeStr = time.format('HH:mm');
+  msg.timeTitle = time.format();
+  this.emit('activity', time); // notify, that there has been activity on this vloc
 
   // TODO linkify links with a regexp like
   // /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/
 
-  // TODO proper stash structure (quick refs vs ordering)
-  //if (!this.msgsById) this.msgsById = {};
+  // store to internal structures
   this.msgs.push(msg);
   this.msgsById[msg.id] = msg;
 
