@@ -22,62 +22,32 @@ var dict = require('./lang');
 
 exports = module.exports = initHeading;
 
-function initHeading(block) {
+function initHeading(block, modes ) {
 
-  var $heading = block.$el.find('#' + block.id + '-heading');
+  modes = typeof modes !== 'undefined' ? modes : ['heading', 'description']; // by default assume there are two heading type of things
 
-  if (__CONTROL__) {
-    initHeadingEdit(block, $heading);
-  }
+  modes.forEach( function( mode ) {
 
-  block.on('change:heading', function(heading) {
+    var $dom = block.$el.find('#' + block.id + '-' + mode);
+
+    block.on('change:' + mode, function(newValue) {
+      if (__CONTROL__) {
+        var $toolbarHeading = block.$el.find('#' + block.id + '-toolbar-' + mode);
+        $toolbarHeading.text( newValue );
+        $dom.text( newValue || '-'); // or el.textContent =
+      } else {
+        $dom.text( newValue ); // or el.textContent =
+      }
+    });
+
+    block.emit('change:' + mode, block.config[mode] );
+
     if (__CONTROL__) {
-      //block.$toolbar.find('#' + block.id + '-heading-');
-      var $toolbarHeading = block.$el.find('#' + block.id + '-toolbar-heading');
-      $toolbarHeading.text(heading);
-      $heading.text(heading || '-'); // or el.textContent =
-    } else {
-      $heading.text(heading); // or el.textContent =
-    }
-  });
-  block.emit('change:heading', block.config.heading);
-}
 
-if (__CONTROL__) {
-  var initHeadingEdit = function(block, $heading) {
-    $heading.attr('title', dict.HEADING_HOVER);
-    $heading.on('click', function() {
-      $heading.attr('contenteditable', true); // or el.setAttribute('contenteditable', 'true');
-      $heading.focus();
-      return false;
-    });
+      var common = require('./commonClient.js');
+      common.controlTextField( block, mode, dict[ mode + '_HOVER'], $dom );
 
-    $heading.on('keydown', function(ev) {
-      if (ev.which == 27) {
-        // Esc, cancel edit
-        $heading.text(block.config.heading);
-        $heading.blur();
-        return false;
-      }
-      if (ev.which == 13) {
-        // Return, save
-        $heading.blur();
-        return false;
-      }
-    });
-    $heading.on('blur', function() { // or el.onblur =
-      checkAndSend();
-      return false;
-    });
+    };
 
-    function checkAndSend() {
-      $heading.attr('contenteditable', null);
-      var headingText = $heading.text();
-      if (headingText == block.config.heading) return;
-      if (headingText === '-') return;
-      block.$setConfig({heading: headingText});
-      block.rpc('$heading', headingText);
-    }
-
-  };
+  } )
 }

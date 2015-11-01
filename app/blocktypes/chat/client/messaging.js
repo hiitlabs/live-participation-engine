@@ -26,6 +26,8 @@ var siteConfig = require('/core').config;
 
 var rpc = require('/core/rpc');
 
+var common = require('./commonClient.js');
+
 exports = module.exports = initMessaging;
 
 // TODO think whether to extend prototype properly.
@@ -67,21 +69,17 @@ function initMessagingBasics(block) {
   if (!block.msgs) block.msgs = [];
   if (!block.msgsById) block.msgsById = {};
 
+  // load previous messages when a "data" call is made
   // TODO get first batch of messages already from block config
   // for fast rendering, just update more via data or specific rpc requests
   block.on('data', function(data) {
     // TODO compare here or somewhere
     if (data.msgs) {
-      block.$msgsIn(data.msgs);
+      for (var i = 0; i < data.msgs.length; i++) {
+        this.$msgIn( data.msgs[i], true);
+      }
     }
   });
-
-  // TODO save to internal this.msgs structure
-  block.$msgsIn = function(msgs) {
-    for (var i = 0; i < msgs.length; i++) {
-      this.$msgIn(msgs[i], true);
-    }
-  };
 
   block.$msgIn = $msgIn;
 
@@ -96,8 +94,8 @@ function initMessagingBasics(block) {
   if (__SCREEN__) return; // We don't need interaction yet
 
   var $inputField = block.$el.find('#' + block.id + '-input');
-  var $sendBtn = block.$el.find('#' + block.id + '-send');
-  $sendBtn.on('click', function(ev) {
+
+  var _sendClick = function(ev) {
     var text = $inputField.val();
     text = trimWhitespace(text);
     if (!text) {
@@ -109,7 +107,10 @@ function initMessagingBasics(block) {
       return false;
     }
 
-    var msg = {text: text};
+    var msg = {
+      text: text,
+      withUsername: $(this).attr('id').indexOf('-sendWithUsername') > 0 // check which variant of the button we're in
+    };
     // For now, clear text field right away (could lose msg on failed send)
     // to prevent duplicate sends on slow sends
     $inputField.val('');
@@ -127,39 +128,14 @@ function initMessagingBasics(block) {
     });
 
     return false;
-  });
-  var $sendWithUsernameBtn = block.$el.find('#' + block.id + '-sendWithUsername');
-  // TODO consolidate with above! Only change is withUsername
-  $sendWithUsernameBtn.on('click', function(ev) {
-    var text = $inputField.val();
-    text = trimWhitespace(text);
-    if (!text) {
-      $inputField.val('');
-      return false;
-    }
-    if (text.length > 500) {
-      alert('Max 500 characters, thank you');
-      return false;
-    }
-    var msg = {
-      text: text,
-      withUsername: true
-    };
-    $inputField.val('');
-    $inputField.blur();
-    block.rpc('$msg', msg, function(err) {
-      if (err) return; //something
+  };
 
-      if (siteConfig.ONE_MSG) {
-        if (block.config.onlyOneSend) {
-          // TODO properly, now let's just fake a disabled event (without affecting
-          // block.config.active to prevent reversals)
-          block.emit('change:active', false);
-        }
-      }
-    });
-    return false;
-  });
+  var $sendBtn = block.$el.find('#' + block.id + '-send');
+  $sendBtn.on('click', _sendClick );
+
+  var $sendWithUsernameBtn = block.$el.find('#' + block.id + '-sendWithUsername');
+  $sendWithUsernameBtn.on('click', _sendClick );
+
 
   if (siteConfig.NOTIFYWRITING) {
     var throttledNotify = _.throttle(function() {
@@ -184,6 +160,8 @@ function $msgIn(msg, immediate) {
 
   // TODO check existing from dom or from .msgs (to not get duplicates after reconnects)
   // TODO clean up, emit msg to allow quality feature from other module
+
+  // messages can be deleted, handling it here
 
   var existingMsg = this.msgsById[msg.id];
   if (existingMsg) {
@@ -235,24 +213,18 @@ function $msgIn(msg, immediate) {
     return;
   }
 
-
-  var time = moment(msg.time);
-  // TODO localization
-  // TODO perhaps only latest as (1 min ago), update them every 15 secs or so,
-  // then after some time as static timestamps?
-  msg.timeStr = time.format('HH:mm');
-  //msg.timeStr = time.fromNow();
-  msg.timeTitle = time.format();
-
   msg.blockId = this.id;
 
-  this.emit('activity', time);
+  // timestamp
+  var time = moment(msg.time);
+  msg.timeStr = time.format('HH:mm');
+  msg.timeTitle = time.format();
+  this.emit('activity', time); // notify, that there has been activity on this vloc
 
   // TODO linkify links with a regexp like
   // /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/
 
-  // TODO proper stash structure (quick refs vs ordering)
-  //if (!this.msgsById) this.msgsById = {};
+  // store to internal structures
   this.msgs.push(msg);
   this.msgsById[msg.id] = msg;
 
@@ -420,50 +392,9 @@ function initReplying(block) {
 
 
 function initDisable(block) {
+
   if (__CONTROL__) {
-
-    function $newButton() {
-      var buttonStr = '<a class="btn btn-sm" href="#"></a>';
-      var $button = $(buttonStr);
-      //$button.tooltip({placement: 'auto top', delay: {show: 700, hide: 0}, container: 'body'});
-
-      function buttonOn() {
-        $button.html('<span class="text-primary"><span class="glyphicon glyphicon-check"></span> ' + dict.DISABLE_BTN + '</span>');
-        $button.attr('title', dict.DISABLE_HOVER);
-        //$button.tooltip('fixTitle');
-        //$button.tooltip('hide');
-      }
-
-      function buttonOff() {
-        $button.html('<span class="text-primary"><span class="glyphicon glyphicon-unchecked"></span> ' + dict.ENABLE_BTN + '</span>');
-        $button.attr('title', dict.ENABLE_HOVER);
-        //$button.tooltip('fixTitle');
-        //$button.tooltip('hide');
-      }
-
-      $button.on('click', function(ev) {
-        if (block.config.active) {
-          buttonOff();
-          block.rpc('$active', false);
-        } else {
-          buttonOn();
-          block.rpc('$active', true);
-        }
-        return false;
-      });
-
-      block.on('change:active', function(enabled) {
-        if (enabled) {
-          buttonOn();
-        } else {
-          buttonOff();
-        }
-      });
-
-      return $button;
-    }
-
-    $newButton().appendTo(block.$minibar);
+    common.controlToggle( block , 'active', dict.DISABLE_BTN, dict.ENABLE_BTN, true );
   }
 
   // Listen for disable events
@@ -517,51 +448,9 @@ function initDisable(block) {
 
 
 function initMsgsSizeOnScreen(block) {
-  if (__CONTROL__) {
 
-    function $newButton() {
-      var buttonStr = '<a class="btn btn-sm" href="#"></a>';
-      var $button = $(buttonStr);
-      //$button.tooltip({placement: 'auto top', delay: {show: 700, hide: 0}, container: 'body'});
-
-      function buttonOff() {
-        $button.html('<span class="text-warning"><span class="glyphicon glyphicon-unchecked"></span> ' + dict.LARGEMSGS_BTN_OFF + '</span>');
-        $button.attr('title', dict.LARGEMSGS_BTN_OFF_HOVER);
-        //$button.tooltip('fixTitle');
-        //$button.tooltip('hide');
-      }
-
-      function buttonOn() {
-        $button.html('<span class="text-warning"><span class="glyphicon glyphicon-check"></span> ' + dict.LARGEMSGS_BTN_ON + '</span>');
-        $button.attr('title', dict.LARGEMSGS_BTN_ON_HOVER);
-        //$button.tooltip('fixTitle');
-        //$button.tooltip('hide');
-      }
-
-      $button.on('click', function(ev) {
-        if (block.config.smallMsgsOnScreen) {
-          buttonOn();
-          block.rpc('$smallMsgsOnScreen', false);
-        } else {
-          buttonOff();
-          block.rpc('$smallMsgsOnScreen', true);
-        }
-        return false;
-      });
-
-      block.on('change:smallMsgsOnScreen', function(small) {
-        if (small) {
-          buttonOff();
-        } else {
-          buttonOn();
-        }
-      });
-
-      return $button;
-    };
-
-    $newButton().appendTo(block.$minibar);
-  }
+    if (__CONTROL__)
+    common.controlToggle( block, 'smallMsgsOnScreen' , dict.LARGEMSGS_BTN_OFF, dict.LARGEMSGS_BTN_ON );
 
   if (__SCREEN__) {
     block.on('change:smallMsgsOnScreen', function(small) {
@@ -587,51 +476,9 @@ function initMsgsSizeOnScreen(block) {
 }
 
 function initHideMsgsOnScreen(block) {
-  if (__CONTROL__) {
 
-    function $newButton() {
-      var buttonStr = '<a class="btn btn-sm" href="#" title=""></a>';
-      var $button = $(buttonStr);
-      //$button.tooltip({placement: 'auto top', delay: {show: 700, hide: 0}, container: 'body'});
-
-      function buttonOff() {
-        $button.html('<span class="text-warning"><span class="glyphicon glyphicon-unchecked"></span> ' + dict.SCREENMSGS_BTN_OFF + '</span>');
-        $button.attr('title', dict.SCREENMSGS_BTN_OFF_HOVER);
-        //$button.tooltip('fixTitle');
-        //$button.tooltip('hide');
-      }
-
-      function buttonOn() {
-        $button.html('<span class="text-warning"><span class="glyphicon glyphicon-check"></span> ' + dict.SCREENMSGS_BTN_ON + '</span>');
-        $button.attr('title', dict.SCREENMSGS_BTN_ON_HOVER);
-        //$button.tooltip('fixTitle');
-        //$button.tooltip('hide');
-      }
-
-      $button.on('click', function(ev) {
-        if (block.config.hideMsgsOnScreen) {
-          buttonOn();
-          block.rpc('$hideMsgsOnScreen', false);
-        } else {
-          buttonOff();
-          block.rpc('$hideMsgsOnScreen', true);
-        }
-        return false;
-      });
-
-      block.on('change:hideMsgsOnScreen', function(hidden) {
-        if (hidden) {
-          buttonOff();
-        } else {
-          buttonOn();
-        }
-      });
-
-      return $button;
-    }
-
-    $newButton().appendTo(block.$minibar)
-  }
+  if (__CONTROL__)
+  common.controlToggle( block, 'hideMsgsOnScreen' , dict.SCREENMSGS_BTN_OFF, dict.SCREENMSGS_BTN_ON );
 
   if (__SCREEN__) {
     block.on('change:hideMsgsOnScreen', function(hidden) {
@@ -653,51 +500,9 @@ function initHideMsgsOnScreen(block) {
 };
 
 function initHideMsgsOnWeb(block) {
-  if (__CONTROL__) {
 
-    function $newButton() {
-      var buttonStr = '<a class="btn btn-sm" href="#" title=""></a>';
-      var $button = $(buttonStr);
-      //$button.tooltip({placement: 'auto top', delay: {show: 700, hide: 0}, container: 'body'});
-
-      function buttonOff() {
-        $button.html('<span class="text-primary"><span class="glyphicon glyphicon-unchecked"></span> ' + dict.WEBMSGS_BTN_OFF + '</span>');
-        $button.attr('title', dict.WEBMSGS_BTN_OFF_HOVER);
-        //$button.tooltip('fixTitle');
-        //$button.tooltip('hide');
-      }
-
-      function buttonOn() {
-        $button.html('<span class="text-primary"><span class="glyphicon glyphicon-check"></span> ' + dict.WEBMSGS_BTN_ON + '</span>');
-        $button.attr('title', dict.WEBMSGS_BTN_ON_HOVER);
-        //$button.tooltip('fixTitle');
-        //$button.tooltip('hide');
-      }
-
-      $button.on('click', function(ev) {
-        if (block.config.hideMsgsOnWeb) {
-          buttonOn();
-          block.rpc('$hideMsgsOnWeb', false);
-        } else {
-          buttonOff();
-          block.rpc('$hideMsgsOnWeb', true);
-        }
-        return false;
-      });
-
-      block.on('change:hideMsgsOnWeb', function(hidden) {
-        if (hidden) {
-          buttonOff();
-        } else {
-          buttonOn();
-        }
-      });
-
-      return $button;
-    }
-
-    $newButton().appendTo(block.$minibar)
-  }
+  if (__CONTROL__)
+  common.controlToggle( block, 'hideMsgsOnWeb' , dict.WEBMSGS_BTN_OFF, dict.WEBMSGS_BTN_ON );
 
   if (__CONTROL__ || __WEB__) {
     block.on('change:hideMsgsOnWeb', function(hidden, immediate) {
@@ -754,51 +559,10 @@ function initHideMsgsOnWeb(block) {
 
 // TODO perhaps move to quality.js
 function initModeration(block) {
-  if (__CONTROL__) {
 
-    function $newButton() {
-      var buttonStr = '<a class="btn btn-sm" href="#"></a>';
-      var $button = $(buttonStr);
-      //$button.tooltip({placement: 'auto top', delay: {show: 700, hide: 0}, container: 'body'});
+  if (__CONTROL__)
+  common.controlToggle( block, 'moderated' , dict.MODERATION_BTN_OFF, dict.MODERATION_BTN_ON );
 
-      function buttonOff() {
-        $button.html('<span class="text-primary"><span class="glyphicon glyphicon-unchecked"></span> ' + dict.MODERATION_BTN_OFF + '</span>');
-        $button.attr('title', dict.MODERATION_BTN_OFF_HOVER);
-        //$button.tooltip('fixTitle');
-        //$button.tooltip('hide');
-      }
-
-      function buttonOn() {
-        $button.html('<span class="text-primary"><span class="glyphicon glyphicon-check"></span> ' + dict.MODERATION_BTN_ON + '</span>');
-        $button.attr('title', dict.MODERATION_BTN_ON_HOVER);
-        //$button.tooltip('fixTitle');
-        //$button.tooltip('hide');
-      }
-
-      $button.on('click', function(ev) {
-        if (block.config.moderated) {
-          buttonOff();
-          block.rpc('$setModerated', false);
-        } else {
-          buttonOn();
-          block.rpc('$setModerated', true);
-        }
-        return false;
-      });
-
-      block.on('change:moderated', function(moderated) {
-        if (moderated) {
-          buttonOn();
-        } else {
-          buttonOff();
-        }
-      });
-
-      return $button;
-    };
-
-    $newButton().appendTo(block.$minibar);
-  }
 
   if (__CONTROL__) {
     block.emit('change:moderated', block.config.moderated);
@@ -806,51 +570,8 @@ function initModeration(block) {
 }
 
 function initUsernames(block) {
-  if (__CONTROL__) {
-
-    function $newButton() {
-      var buttonStr = '<a class="btn btn-sm" href="#"></a>';
-      var $button = $(buttonStr);
-      //$button.tooltip({placement: 'auto top', delay: {show: 700, hide: 0}, container: 'body'});
-
-      function buttonOff() {
-        $button.html('<span class="text-primary"><span class="glyphicon glyphicon-unchecked"></span> ' + dict.USERNAMES_BTN_OFF + '</span>');
-        $button.attr('title', dict.USERNAMES_BTN_OFF_HOVER);
-        //$button.tooltip('fixTitle');
-        //$button.tooltip('hide');
-      }
-
-      function buttonOn() {
-        $button.html('<span class="text-primary"><span class="glyphicon glyphicon-check"></span> ' + dict.USERNAMES_BTN_ON + '</span>');
-        $button.attr('title', dict.USERNAMES_BTN_ON_HOVER);
-        //$button.tooltip('fixTitle');
-        //$button.tooltip('hide');
-      }
-
-      $button.on('click', function(ev) {
-        if (block.config.usernames) {
-          buttonOff();
-          block.rpc('$usernames', false);
-        } else {
-          buttonOn();
-          block.rpc('$usernames', true);
-        }
-        return false;
-      });
-
-      block.on('change:usernames', function(usernames) {
-        if (usernames) {
-          buttonOn();
-        } else {
-          buttonOff();
-        }
-      });
-
-      return $button;
-    };
-
-    $newButton().appendTo(block.$minibar);
-  }
+  if (__CONTROL__)
+  common.controlToggle( block, 'usernames' , dict.USERNAMES_BTN_OFF, dict.USERNAMES_BTN_ON );
 
   block.on('change:usernames', function(usernames, immediate) {
     var $sendButton = this.$el.find('#' + this.id + '-sendWithUsername');
@@ -879,45 +600,9 @@ function initUsernames(block) {
 }
 
 function initEditing(block) {
-  if (__CONTROL__ || __STAGE__) {
+  if (__CONTROL__ || __STAGE__)
+  common.controlToggle( block, 'editingButtons' , dict.EDITINGBUTTONS_BTN_OFF, dict.EDITINGBUTTONS_BTN_ON );
 
-    function $newButton() {
-      var buttonStr = '<a class="btn btn-sm" href="#"></a>';
-      var $button = $(buttonStr);
-
-      function buttonOff() {
-        $button.html('<span class="text-primary"><span class="glyphicon glyphicon-unchecked"></span> ' + dict.EDITINGBUTTONS_BTN_OFF + '</span>');
-        $button.attr('title', dict.EDITINGBUTTONS_BTN_OFF_HOVER);
-      }
-
-      function buttonOn() {
-        $button.html('<span class="text-primary"><span class="glyphicon glyphicon-check"></span> ' + dict.EDITINGBUTTONS_BTN_ON + '</span>');
-        $button.attr('title', dict.EDITINGBUTTONS_BTN_ON_HOVER);
-      }
-
-      $button.on('click', function(ev) {
-        if (block.config.editingButtons) {
-          buttonOff();
-          block.rpc('$editingButtons', false);
-        } else {
-          buttonOn();
-          block.rpc('$editingButtons', true);
-        }
-        return false;
-      });
-      block.on('change:editingButtons', function(shown) {
-        if (shown) {
-          buttonOn();
-        } else {
-          buttonOff();
-        }
-      });
-
-      return $button;
-    }
-
-    $newButton().appendTo(block.$minibar);
-  }
 
   if (__WEB__ || __CONTROL__ || __STAGE__) {
 
@@ -996,45 +681,9 @@ function initEditing(block) {
 }
 
 function initOnlyOneSend(block) {
-  if (__CONTROL__ || __STAGE__) {
+  if (__CONTROL__ || __STAGE__)
+  common.controlToggle( block, 'onlyOneSend' , dict.ONLYONESEND_BTN_OFF, dict.ONLYONESEND_BTN_ON );
 
-    function $newButton() {
-      var buttonStr = '<a class="btn btn-sm" href="#"></a>';
-      var $button = $(buttonStr);
-
-      function buttonOff() {
-        $button.html('<span class="text-primary"><span class="glyphicon glyphicon-unchecked"></span> ' + dict.ONLYONESEND_BTN_OFF + '</span>');
-        $button.attr('title', dict.ONLYONESEND_BTN_OFF_HOVER);
-      }
-
-      function buttonOn() {
-        $button.html('<span class="text-primary"><span class="glyphicon glyphicon-check"></span> ' + dict.ONLYONESEND_BTN_ON + '</span>');
-        $button.attr('title', dict.ONLYONESEND_BTN_ON_HOVER);
-      }
-
-      $button.on('click', function(ev) {
-        if (block.config.onlyOneSend) {
-          buttonOff();
-          block.rpc('$onlyOneSend', false);
-        } else {
-          buttonOn();
-          block.rpc('$onlyOneSend', true);
-        }
-        return false;
-      });
-      block.on('change:onlyOneSend', function(shown) {
-        if (shown) {
-          buttonOn();
-        } else {
-          buttonOff();
-        }
-      });
-
-      return $button;
-    }
-
-    $newButton().appendTo(block.$minibar);
-  }
 
   if (__WEB__ || __CONTROL__ || __STAGE__) {
 

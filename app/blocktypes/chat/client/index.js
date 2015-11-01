@@ -27,7 +27,6 @@ var viewFn = require('./view.html');
 var dictionary = require('./lang');
 
 var heading = require('./heading');
-var description = require('./description');
 var messaging = require('./messaging');
 var quality = require('./quality');
 var highlights = require('./highlights');
@@ -131,7 +130,6 @@ Block.prototype.render = function() {
 
   // Block specific functionalities
   heading(this);
-  description(this);
   messaging(this);
   quality(this);
   highlights(this);
